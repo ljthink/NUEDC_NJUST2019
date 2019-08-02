@@ -20,8 +20,8 @@
 int main(void)
 {
   /* ---------------------      硬件初始化         -------------------------- */
-  system_init();/* MCU初始化 */
-  //car_direction_barrier_test();/* 单个功能测试函数位置 */
+  system_init();        /* MCU初始化 */
+      /* 单个功能测试函数位置 */
   lpuart1_init(115200);         /* 蓝牙发送串口启动 */
   key.init();                   /* 按键启动 */
   led.init();                   /* 指示灯启动 */
@@ -32,7 +32,7 @@ int main(void)
   motor.init();         /* 车速PID控制初始化.包含ENC,PWM,PID参数初始化 */       
   img.init();                   /* 相机接口初始化 */
   delayms(200);                 /* 必要的延时，等待相机感光元件稳定 */
-  //UI_debugsetting();
+  UI_debugsetting();
   pit_init(kPIT_Chnl_0, 10000);
   
   while(1)

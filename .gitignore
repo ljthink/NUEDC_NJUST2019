@@ -43,18 +43,8 @@
 *.pdb
 *.xcl
 *.pbi
+*.bin
+*.sim
+*.map
 
-
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
-
-电赛程序\Obj
-电赛程序\List
-电赛程序\Exe
 
