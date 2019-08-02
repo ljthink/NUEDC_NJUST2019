@@ -98,12 +98,10 @@ void encoder_position_test(void)
   char txt[16];
   while (1)
   { 
-    s1 = (int16_t)ENC_GetPositionValue(ENC1);
-    sprintf(txt,"ENC1: %6d ",s1); 
+    sprintf(txt,"ENC1: %6d ",motor_speed.enc_left); 
     LCD_P6x8Str(0,0,(uint8_t*)txt);
     
-    s2 = (int16_t)ENC_GetPositionValue(ENC2);  //得到编码器微分值
-    sprintf(txt,"ENC2: %6d ",s2);
+    sprintf(txt,"ENC2: %6d ",motor_speed.enc_right);
     LCD_P6x8Str(0,1,(uint8_t*)txt);
     
     if (s2>4000)

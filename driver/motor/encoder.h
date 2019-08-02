@@ -18,6 +18,7 @@
 #ifndef _ENCODER_H
 #define _ENCODER_H
 
+
 /*-------------------            编码器硬件接口       -------------------*/
 
 /*-------------- 龙邱母版引脚 --------------*/
@@ -56,4 +57,7 @@
 void enc_init(void);
 void encoder_test(void);
 void encoder_position_test(void);
+
+
+
 #endif 

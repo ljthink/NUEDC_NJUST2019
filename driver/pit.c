@@ -4,7 +4,7 @@
 /*!
  * @brief PIT定时中断初始化
  *
- * @param channel   通道选择
+ * @param channel   通道选择   count 微秒
  * ----------------------------------------
  * pit_init(kPIT_Chnl_0, 100000);  //通道0中断，100000us中断一次
  */
@@ -41,15 +41,15 @@ void PIT_IRQHandler(void)
   if((PIT_GetStatusFlags(PIT,kPIT_Chnl_0)&kPIT_TimerFlag)==kPIT_TimerFlag)
   {   
     PIT_ClearStatusFlags(PIT, kPIT_Chnl_0, kPIT_TimerFlag); /* Clear flag.*/
-    status.interrupt_10ms ++;
+    status.interrupt_ch0 = 1;
   }
   
   /* 通道2：定时500ms，作为圆环的硬件延时标志位 */
   if((PIT_GetStatusFlags(PIT,kPIT_Chnl_1)&kPIT_TimerFlag)==kPIT_TimerFlag)
   {
     PIT_ClearStatusFlags(PIT, kPIT_Chnl_1, kPIT_TimerFlag); /* Clear flag.*/
-    status.interrupt_500ms ++;
-    PIT_StopTimer(PIT, kPIT_Chnl_1); /* 单词定时 */
+    status.interrupt_ch1 = 1;
+    //PIT_StopTimer(PIT, kPIT_Chnl_1); /* 单词定时 */
   }
   
   /* 通道3：未使用 */
@@ -74,11 +74,11 @@ void pit_test(void)
   timer_start(kPIT_Chnl_1,500);
   while (1)
   {
-    while(status.interrupt_500ms == 0)
+    while(status.interrupt_ch1 == 0)
     {
     }
     led.ops->reverse(UpLight);
     
-    status.interrupt_500ms = 0;    
+    status.interrupt_ch1 = 0;    
   }
 }

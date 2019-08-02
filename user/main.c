@@ -28,47 +28,40 @@ int main(void)
   NVIC_SetPriorityGrouping(2);  /* 2: 4个抢占优先级 4个子优先级*/
   oled.init();                   /* LCD启动 */
   //ExInt_Init();                 /* 中断启动 */
-  adc.init();
+char txt[16];
   motor.init();         /* 车速PID控制初始化.包含ENC,PWM,PID参数初始化 */       
-  img.init();                   /* 相机接口初始化 */
+
   delayms(200);                 /* 必要的延时，等待相机感光元件稳定 */
-  UI_debugsetting();
-  pit_init(kPIT_Chnl_0, 10000);
+
   
+  pit_init(kPIT_Chnl_0, 5000); /* 5000us中断 */
+  pit_init(kPIT_Chnl_1, 100000); /* 5000us中断 */ 
+  motor_speed.left = 40;
+  motor_speed.right = 40;
   while(1)
   {
-	  /* 10ms中断置位？  */
-	  while (status.interrupt_10ms == 0)
+	  /* ch0中断置位？5ms  */
+	  while (status.interrupt_ch0 == 0)
 	  {
-      adc.refresh();      /* 更新赛道电磁引导线信息，adc_roadtype数据包更新 */
-      
-      //adc.circle_check(); /* 圆环检测、偏差检测，转换为电磁引导模式 */
 	  }
-    
-    key.barrier_check(); /* 路障检查 */
-    /* 如果图像就绪，图像刷新，道路类型判断 */
-    if(kStatus_Success == CAMERA_RECEIVER_GetFullBuffer(&cameraReceiver, &CameraBufferAddr))
-    {
-      img.refresh();            /* 更新图像和偏差等控制信息 */
-      adc.error_check();        /* 电磁引导线偏差检查 */
-    }
-    
-    car.direction_control();  /* 舵机打角更新 */
-    
-    car_speed_calculate();      /* 更新一次左右电机目标速度 */    
-    
+
     /* 两个电机转速控制 */
     motor.pidcontrol(&motor_speed);
     
-    status_indicator.light_road();    /* 状态灯指示更新 */
-    status_indicator.oled_circle();   /* 屏幕显示更新 */
     
-    char txt[16];
-    sprintf(txt,"%3d ",(int16_t)motor_speed.left);
-    LCD_P6x8Str(0,5,(uint8_t*)txt);   
-
+    if (status.interrupt_ch1 == 1 )
+    {
+      sprintf(txt,"ENC1: %6d ",motor_speed.enc_left); 
+      LCD_P6x8Str(0,0,(uint8_t*)txt);
+      
+      sprintf(txt,"ENC2: %6d ",motor_speed.enc_right);
+      LCD_P6x8Str(0,1,(uint8_t*)txt);
+      
+      status.interrupt_ch1 = 0;
+    }
+    
     /* 中断复位 */
-    status.interrupt_10ms = 0;
+    status.interrupt_ch0 = 0;
   }
 }
 

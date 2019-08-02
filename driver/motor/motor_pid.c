@@ -129,7 +129,7 @@ static void motor_pid_test(void)
   
   while (1)
   {        
-	  while (status.interrupt_10ms == 0)
+	  while (status.interrupt_ch0 == 0)
 	  {
 		  /* 遥控中断给出调试标志位 */
 //		  if(status.debug_mode == 1)
@@ -147,6 +147,6 @@ static void motor_pid_test(void)
 //    LCD_P6x8Str(0,1,(uint8_t*)txt);
     
     /* 中断复位 */
-    status.interrupt_10ms = 0;
+    status.interrupt_ch0 = 0;
   }
 }
