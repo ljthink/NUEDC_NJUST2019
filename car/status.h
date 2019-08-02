@@ -44,14 +44,17 @@ typedef enum _status_sensor
 
 typedef struct 
 {
-    uint8_t               debug_mode          ;    //用户界面模式
-    volatile uint8_t      interrupt_10ms      ;
-    volatile uint8_t      interrupt_500ms     ;
-    uint8_t               car_stop            ;    //停车标志位
-    uint8_t               low_power           ;    //低电压标志位
-    status_roadtype_t     img_roadtype        ;    //道路类型标志位
-    status_sensor_t       sensor              ;     /* 当前使用传感器类型 */
-    uint8_t               barrier             ;
+  uint8_t               debug_mode         : 1;    //用户界面模式
+  uint8_t               interrupt_ch0      : 1 ;
+  uint8_t               interrupt_ch1      : 1 ;
+  uint8_t               interrupt_ch2      : 1 ;
+  uint8_t               interrupt_ch3      : 1 ;    
+  uint8_t               car_stop           : 1 ;    //停车标志位
+  uint8_t               low_power          : 1 ;    //低电压标志位
+  uint8_t               barrier            : 1 ;   
+  status_roadtype_t     img_roadtype        ;    //道路类型标志位
+  status_sensor_t       sensor              ;     /* 当前使用传感器类型 */
+  
 } carstatus_t;
 
 extern carstatus_t status;

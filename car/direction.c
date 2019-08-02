@@ -175,6 +175,6 @@ static void car_direction_barrier_control(void)
   /* 右转 */
   while(ENC_GetPositionValue(ENC2)<7000)
     servo(1630);
-  status.barrier = 2;
+
 }
 

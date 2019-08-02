@@ -72,8 +72,7 @@ void servo(uint16_t duty);
 
 
 void servo_test(void);
-void test_motor(void);
-
+void pwm_test(void);
 
 
 

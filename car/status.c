@@ -20,14 +20,16 @@
 /* 小车状态全局标志位 */
 carstatus_t status = 
 {
-    .debug_mode             = 1,  //按键调试模式
-    .car_stop               = 0,  //停车标志位
-    .low_power              = 0,  //低电压标志位
-    .interrupt_10ms         = 0,
-    .interrupt_500ms        = 0,
-    .img_roadtype           = RoadStraight,
-    .sensor                 = Camera,
-    .barrier                = 0,    
+  .debug_mode             = 1,  //按键调试模式
+  .car_stop               = 0,  //停车标志位
+  .low_power              = 0,  //低电压标志位
+  .interrupt_ch0          = 0,
+  .interrupt_ch1          = 0,
+  .interrupt_ch2          = 0,
+  .interrupt_ch3          = 0,
+  .img_roadtype           = RoadStraight,
+  .sensor                 = Camera,
+  .barrier                = 0,    
 };
 
 

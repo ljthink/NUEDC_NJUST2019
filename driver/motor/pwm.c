@@ -29,37 +29,14 @@
  */
 void left_motor(short duty)
 {
-  if(duty >= 0)  //  正转
-  {
-    if (duty >= DUTY_MAX)
-      duty = DUTY_MAX;
-    PWM_UpdateDuty(PWM1, kPWM_Module_3, kPWM_PwmA, 0); 
-    PWM_UpdateDuty(PWM1, kPWM_Module_3, kPWM_PwmB, duty); 
+    PWM_UpdateDuty(PWM1, kPWM_Module_3, kPWM_PwmA, duty); 
     PWM_SetPwmLdok(PWM1, 1u<<kPWM_Module_3, true);        //设置pwm的 load ok位
-  }
-  else
-  {
-    if (duty <= -DUTY_MAX)
-      duty = -DUTY_MAX;
-    PWM_UpdateDuty(PWM1, kPWM_Module_3, kPWM_PwmA, -duty); 
-    PWM_UpdateDuty(PWM1, kPWM_Module_3, kPWM_PwmB, 0); 
-    PWM_SetPwmLdok(PWM1, 1u<<kPWM_Module_3, true);        //设置pwm的 load ok位                
-  }
 }
+
 void right_motor(short duty)
 {
-  if(duty >= 0)  //  正转
-  {
-    PWM_UpdateDuty(PWM2, kPWM_Module_0, kPWM_PwmA, 0); 
-    PWM_UpdateDuty(PWM2, kPWM_Module_0, kPWM_PwmB, duty); 
+    PWM_UpdateDuty(PWM2, kPWM_Module_0, kPWM_PwmA, duty);  
     PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_0, true);        //设置pwm的 load ok位
-  }
-  else
-  {
-    PWM_UpdateDuty(PWM2, kPWM_Module_0, kPWM_PwmA, -duty); 
-    PWM_UpdateDuty(PWM2, kPWM_Module_0, kPWM_PwmB, 0); 
-    PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_0, true);        //设置pwm的 load ok位
-  }
 }
 /**
  *  设置舵机pwm(角度)
@@ -122,16 +99,18 @@ static void pwm_config(void)
   pwmConfig.reloadLogic       = kPWM_ReloadPwmFullCycle;   //循环输出
   pwmConfig.enableDebugMode   = true;    
   pwmConfig.prescale          = kPWM_Prescale_Divide_32;        //PWM时钟为 pwmSourceClockInHz 32分频 
-  
+  pwmConfig.pairOperation     = kPWM_ComplementaryPwmA; /* AB通道互补输出，A为主通道 */
+        
+    
   pwmSignal[0].pwmChannel       = kPWM_PwmA;        //默认使用通道A
   pwmSignal[0].level            = kPWM_HighTrue;    //输出电平为高电平
-  pwmSignal[0].dutyCyclePercent = 0;                //初始占空比 0%
-  pwmSignal[0].deadtimeValue    = 0;                //死区时间
+  pwmSignal[0].dutyCyclePercent = 50;                //初始占空比 0%
+  pwmSignal[0].deadtimeValue    = ((uint64_t)pwmSourceClockInHz * 5000) / 1000000000;                //死区时间
   /*当AB两通道同时使用 才有作用*/
   pwmSignal[1].pwmChannel       = kPWM_PwmB;        // 使用PWMB
   pwmSignal[1].level            = kPWM_HighTrue;    //输出电平为高电平
-  pwmSignal[1].dutyCyclePercent = 0;                //初始占空比 0%
-  pwmSignal[1].deadtimeValue    = 0;      //死区时间
+  pwmSignal[1].dutyCyclePercent = 50;                //初始占空比 0%
+  pwmSignal[1].deadtimeValue    = ((uint64_t)pwmSourceClockInHz * 5000) / 1000000000;      //死区时间
   
   PWM_Init(PWM2, kPWM_Module_0, &pwmConfig);
   PWM2->SM[kPWM_Module_0].DISMAP[0]=0;      //屏蔽故障检测功能 
@@ -146,12 +125,12 @@ static void pwm_config(void)
   PWM_SetPwmLdok(PWM1, 1u<<kPWM_Module_3, true);    //设置pwm的 load ok位
   PWM_StartTimer(PWM1, 1u<<kPWM_Module_3);          //开启定时器 
   
-  PWM_Init(PWM2, kPWM_Module_3, &pwmConfig);
-  PWM2->SM[kPWM_Module_3].DISMAP[0]=0;      //屏蔽故障检测功能
-  PWM_SetupPwm(PWM2, kPWM_Module_3, pwmSignal, 1, kPWM_SignedCenterAligned, 100,pwmSourceClockInHz); 
-  PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);    //设置pwm的 load ok位
-  PWM_StartTimer(PWM2, 1u<<kPWM_Module_3);          //开启定时器 
-  servo(SERVO_MID);
+//  PWM_Init(PWM2, kPWM_Module_3, &pwmConfig);
+//  PWM2->SM[kPWM_Module_3].DISMAP[0]=0;      //屏蔽故障检测功能
+//  PWM_SetupPwm(PWM2, kPWM_Module_3, &pwmSignal, 1, kPWM_SignedCenterAligned, 100,pwmSourceClockInHz); 
+//  PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);    //设置pwm的 load ok位
+//  PWM_StartTimer(PWM2, 1u<<kPWM_Module_3);          //开启定时器 
+//  servo(SERVO_MID);
 }
 
 void pwm_init(void)
@@ -205,14 +184,14 @@ void servo_test(void)
   }
 }
 
-void test_motor(void)
+void pwm_test(void)
 {    
   key.init();
   enc_init();
   pwm_init();
   oled.init();
   char txt[16];
-  short motorpwm=0;  
+  short motorpwm=5000;  
   short left_enc,right_enc;
 
   while (1)
@@ -223,18 +202,16 @@ void test_motor(void)
       break;
     case key_minus:
       motorpwm -= 100;
-      if(motorpwm < -10000) motorpwm = -10000;
       left_motor(motorpwm);
       right_motor(motorpwm);
       break;           
     case key_plus:           
       motorpwm += 100;
-      if(motorpwm > 10000) motorpwm = 10000;
       left_motor(motorpwm);
       right_motor(motorpwm);
       break;
     case key_ok:
-      motorpwm = 0;
+      motorpwm = 5000;
       left_motor(motorpwm);
       right_motor(motorpwm);
       break;
