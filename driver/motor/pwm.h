@@ -52,14 +52,22 @@ void pwm_init(void);
 /**
  *  设置电机占空比（速度）
  *  ----------------
- *  duty                占空比             -DUTY_MAX ~ DUTY_MAX
- *  ----------------
- *  duty最大值10000定义在DUTY_MAX
- *  
- *  left_motor(-2000)  //左电机反转  占空比  2000 / 10000 
+ *  duty                占空比             0~10000
+ *  ---------------- 
+ *  0     前进      5000     后退    10000
  */
-void left_motor(short duty);
-void right_motor(short duty);
+static inline void left_motor(short duty)
+{
+    PWM_UpdateDuty(PWM1, kPWM_Module_3, kPWM_PwmA, duty); 
+    PWM_SetPwmLdok(PWM1, 1u<<kPWM_Module_3, true);        //设置pwm的 load ok位
+}
+static inline void right_motor(short duty)
+{
+    PWM_UpdateDuty(PWM2, kPWM_Module_0, kPWM_PwmA, duty);  
+    PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_0, true);        //设置pwm的 load ok位
+}
+
+
 
 /**
  *  设置舵机角度
@@ -71,8 +79,16 @@ void right_motor(short duty);
 void servo(uint16_t duty);
 
 
+
+
+
+
+
 void servo_test(void);
 void pwm_test(void);
+
+
+
 
 
 

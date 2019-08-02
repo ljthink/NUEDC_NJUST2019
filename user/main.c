@@ -21,7 +21,7 @@ int main(void)
 {
   /* ---------------------      硬件初始化         -------------------------- */
   system_init();        /* MCU初始化 */
-  pwm_test();    /* 单个功能测试函数位置 */
+  //pwm_test();    /* 单个功能测试函数位置 */
   lpuart1_init(115200);         /* 蓝牙发送串口启动 */
   key.init();                   /* 按键启动 */
   led.init();                   /* 指示灯启动 */
@@ -36,8 +36,8 @@ char txt[16];
   
   pit_init(kPIT_Chnl_0, 5000); /* 5000us中断 */
   pit_init(kPIT_Chnl_1, 100000); /* 5000us中断 */ 
-  motor_speed.left = 40;
-  motor_speed.right = 40;
+  motor_speed.left = 20;
+  motor_speed.right = 20;
   while(1)
   {
 	  /* ch0中断置位？5ms  */

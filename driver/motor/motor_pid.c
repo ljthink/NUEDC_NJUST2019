@@ -17,6 +17,7 @@
 
 #include "system.h"
 
+/*--------------------- 电机转速闭环使用到的的全局参数 -----------------------*/
 short speedvalue;
 
 /* 单个电机的速度PID参数 */
@@ -35,13 +36,13 @@ motor_speed_t motor_speed = {
     .right = 0,
 };
 
-
 /* ---------------------------- 方法声明 ------------------------------------ */
 static void motor_pid_device_init(void);
 static void motor_pid_clear(motor_pid_t* base);
 static void motor_pid_change(motor_pid_t* base,float p,float i,float d);
 static void motor_pid_control(motor_speed_t *speed);
 static void motor_pid_test(void);
+
 
 /* ---------------------------- 外部接口 ------------------------------------ */
 
@@ -60,7 +61,7 @@ static void motor_pid_device_init(void)
 {
   enc_init();
   pwm_init();
-  motor.pidchange(&pid,0.2,0.1,0);
+  motor.pidchange(&pid,4,1,0);
 }
 
 static void motor_pid_clear(motor_pid_t* base)
@@ -89,26 +90,66 @@ static void motor_pid_change(motor_pid_t* base,float p,float i,float d)
   base->right->kd = d;
 }
 
-
+/* 电机pi控制 */
 static void motor_pid_control(motor_speed_t *speed)
 {
   speed->enc_left = (int16_t)ENC_GetPositionDifferenceValue(ENC1);  //得到编码器微分值
   speed->enc_right = (int16_t)ENC_GetPositionDifferenceValue(ENC2);  //得到编码器微分值
 
   pid.left->err = speed->left - speed->enc_left;
-  
-  pid.left->ut += pid.left->kp*(pid.left->err - pid.left->err1)
-    + pid.left->ki*pid.left->err
-      + pid.left->kd*(pid.left->err - 2*pid.left->err1 + pid.left->err2);
-  
   pid.right->err = speed->right - speed->enc_right;
-  pid.right->ut += pid.right->kp*(pid.right->err - pid.right->err1)
-    + pid.right->ki*pid.right->err
-      + pid.right->kd*(pid.right->err - 2*pid.right->err1 + pid.right->err2); 
-  
-  left_motor((int16_t)pid.left->ut);
-  right_motor((int16_t)pid.right->ut);
+ 
+  /* 偏差过大开环控制 */
+  if (pid.left->err > 100 || pid.left->err < -100)
+  {
+    pid.left->ut = pid.left->err*20.0f ; /* 偏差过大，直接给到限幅以上 */
+    pid.left->int_err = 0; /* 积分清零 */
+  }
+  else
+  {
+    if (pid.left->int_err<1000 && pid.left->int_err>-1000)  /* 积分限幅 */
+      pid.left->int_err = pid.left->int_err + pid.left->err; /* 偏差积分 */
+    pid.left->ut = pid.left->kp*pid.left->err 
+                 + pid.left->ki*pid.left->int_err;
+  }
 
+  /* 右电机 */
+  if (pid.right->err > 100 || pid.right->err < -100)
+  {
+    pid.right->ut = pid.right->err*20.0f;
+    pid.right->int_err = 0;
+  }
+  else
+  {
+    if(pid.right->int_err<1000 && pid.right->int_err>-1000)
+      pid.right->int_err = pid.right->int_err + pid.right->err;
+    pid.right->ut = pid.right->kp*pid.right->err
+                  + pid.right->ki*pid.right->int_err;
+  }
+
+ /* 增量式PI控制 */   
+//  pid.left->ut += pid.left->kp*(pid.left->err - pid.left->err1)
+//      + pid.left->ki*pid.left->err;  
+//  pid.right->ut += pid.right->kp*(pid.right->err - pid.right->err1)
+//    + pid.right->ki*pid.right->err;   
+//  pid.left->err1 = pid.left->err;
+//  pid.right->err1 = pid.right->err;
+  
+  /* 输出限幅 */
+  if(pid.left->ut > 4500)
+    pid.left->ut = 4500.0f;
+  else if (pid.left->ut < -4500)
+    pid.left->ut = -4500.0f;
+  
+  if(pid.right->ut > 4500)
+    pid.right->ut = 4500.0f;
+  else if (pid.right->ut < -4500)
+    pid.right->ut = -4500.0f;  
+  
+  /* pwm输出 */
+  left_motor((uint16_t)(5000.0f - pid.left->ut));
+  right_motor((uint16_t)(5000.0f - pid.right->ut));
+  
 }
 
 
