@@ -21,23 +21,22 @@ int main(void)
 {
   /* ---------------------      硬件初始化         -------------------------- */
   system_init();        /* MCU初始化 */
-  //pwm_test();    /* 单个功能测试函数位置 */
+  pwm_test();    /* 单个功能测试函数位置 */
   lpuart1_init(115200);         /* 蓝牙发送串口启动 */
   key.init();                   /* 按键启动 */
   led.init();                   /* 指示灯启动 */
   NVIC_SetPriorityGrouping(2);  /* 2: 4个抢占优先级 4个子优先级*/
   oled.init();                   /* LCD启动 */
+
   //ExInt_Init();                 /* 中断启动 */
-char txt[16];
-  motor.init();         /* 车速PID控制初始化.包含ENC,PWM,PID参数初始化 */       
-
-  delayms(200);                 /* 必要的延时，等待相机感光元件稳定 */
-
+  char txt[16];
+ 
+  motor.init();         /* 车速PID控制初始化.包含ENC,PWM,PID参数初始化 */ 
+  UI_debugsetting();
   
   pit_init(kPIT_Chnl_0, 5000); /* 5000us中断 */
   pit_init(kPIT_Chnl_1, 100000); /* 5000us中断 */ 
-  motor_speed.left = 20;
-  motor_speed.right = 20;
+
   while(1)
   {
 	  /* ch0中断置位？5ms  */
@@ -47,7 +46,6 @@ char txt[16];
 
     /* 两个电机转速控制 */
     motor.pidcontrol(&motor_speed);
-    
     
     if (status.interrupt_ch1 == 1 )
     {
@@ -59,6 +57,8 @@ char txt[16];
       
       status.interrupt_ch1 = 0;
     }
+    
+    
     
     /* 中断复位 */
     status.interrupt_ch0 = 0;

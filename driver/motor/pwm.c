@@ -164,7 +164,8 @@ void servo_test(void)
 }
 
 void pwm_test(void)
-{    
+{   
+  lpuart1_init(115200);
   key.init();
   enc_init();
   pwm_init();
@@ -172,10 +173,16 @@ void pwm_test(void)
   char txt[16];
   short motorpwm=5000;  
   short left_enc,right_enc;
+  
+  pit_init(kPIT_Chnl_0, 5000); /* 5000us中断 */
 
   while (1)
-  {        
-    switch(key.ops->get(1))  //检测按键
+  {    
+	  /* ch0中断置位？5ms  */
+	  while (status.interrupt_ch0 == 0)
+	  {
+	  }
+    switch(key.ops->get(0))  //检测按键
     {
     case no_key:
       break;
@@ -195,7 +202,6 @@ void pwm_test(void)
       right_motor(motorpwm);
       break;
     }
-    
     sprintf(txt,"PWM: %4.2f %",motorpwm/100.0f);
     LCD_P6x8Str(0,0,(uint8_t*)txt);
 
@@ -206,8 +212,9 @@ void pwm_test(void)
     LCD_P6x8Str(0,1,(uint8_t*)txt);
     sprintf(txt,"R:  %5d ",right_enc); 
     LCD_P6x8Str(0,2,(uint8_t*)txt);
-    //LED闪烁
-    led.ops->reverse(UpLight);  
-    delayms(50);
+    
+    printf("%d\n",left_enc);
+        /* 中断复位 */
+    status.interrupt_ch0 = 0;
   }
 }

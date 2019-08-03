@@ -42,7 +42,7 @@
     #include "fsl_xbara.h"
     #include "board.h"
  
-
+    //#include "list.h"
     #include "status.h"   
     #include "iic.h"
     #include "mt9v034.h"  
@@ -71,7 +71,7 @@
 
     #include "speed.h"
 
-
+    
     #include "userinterface.h"
     
 

@@ -17,24 +17,13 @@
 
 #include "system.h"
 
-/*  速度pid控制，   基于曲率的速度控制 */
 
+void list_uinode_init(ui_node_t selection,const char *txt,void *parameter)
+{
+  selection->oled_txt = txt;
+  
+  
 
-/* ---------------------------- 方法声明 ------------------------------------ */
-
-static void speed_calculate(void);
-static void speed_differential(void);
-
-
-/* ---------------------------- 方法实现 ------------------------------------ */
-
-
-
-
-
-
-
-
-
+}
 
 

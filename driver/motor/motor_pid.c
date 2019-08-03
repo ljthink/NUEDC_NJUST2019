@@ -81,13 +81,9 @@ static void motor_pid_clear(motor_pid_t* base)
 
 static void motor_pid_change(motor_pid_t* base,float p,float i,float d)
 {
-  base->left->kp = p;
-  base->left->ki = i;
-  base->left->kd = d;
-  
-  base->right->kp = p;
-  base->right->ki = i;
-  base->right->kd = d;
+  base->kp = p;
+  base->ki = i;
+  base->kd = d;
 }
 
 /* 电机pi控制 */
@@ -100,40 +96,40 @@ static void motor_pid_control(motor_speed_t *speed)
   pid.right->err = speed->right - speed->enc_right;
  
   /* 偏差过大开环控制 */
-  if (pid.left->err > 100 || pid.left->err < -100)
-  {
-    pid.left->ut = pid.left->err*20.0f ; /* 偏差过大，直接给到限幅以上 */
-    pid.left->int_err = 0; /* 积分清零 */
-  }
-  else
-  {
-    if (pid.left->int_err<1000 && pid.left->int_err>-1000)  /* 积分限幅 */
-      pid.left->int_err = pid.left->int_err + pid.left->err; /* 偏差积分 */
-    pid.left->ut = pid.left->kp*pid.left->err 
-                 + pid.left->ki*pid.left->int_err;
-  }
-
-  /* 右电机 */
-  if (pid.right->err > 100 || pid.right->err < -100)
-  {
-    pid.right->ut = pid.right->err*20.0f;
-    pid.right->int_err = 0;
-  }
-  else
-  {
-    if(pid.right->int_err<1000 && pid.right->int_err>-1000)
-      pid.right->int_err = pid.right->int_err + pid.right->err;
-    pid.right->ut = pid.right->kp*pid.right->err
-                  + pid.right->ki*pid.right->int_err;
-  }
+//  if (pid.left->err > 100 || pid.left->err < -100)
+//  {
+//    pid.left->ut = pid.left->err*20.0f ; /* 偏差过大，直接给到限幅以上 */
+//    pid.left->int_err = 0; /* 积分清零 */
+//  }
+//  else
+//  {
+//    if (pid.left->int_err<1000 && pid.left->int_err>-1000)  /* 积分限幅 */
+//      pid.left->int_err = pid.left->int_err + pid.left->err; /* 偏差积分 */
+//    pid.left->ut = pid.kp*pid.left->err 
+//                 + pid.ki*pid.left->int_err;
+//  }
+//
+//  /* 右电机 */
+//  if (pid.right->err > 100 || pid.right->err < -100)
+//  {
+//    pid.right->ut = pid.right->err*20.0f;
+//    pid.right->int_err = 0;
+//  }
+//  else
+//  {
+//    if(pid.right->int_err<1000 && pid.right->int_err>-1000)
+//      pid.right->int_err = pid.right->int_err + pid.right->err;
+//    pid.right->ut = pid.kp*pid.right->err
+//                  + pid.ki*pid.right->int_err;
+//  }
 
  /* 增量式PI控制 */   
-//  pid.left->ut += pid.left->kp*(pid.left->err - pid.left->err1)
-//      + pid.left->ki*pid.left->err;  
-//  pid.right->ut += pid.right->kp*(pid.right->err - pid.right->err1)
-//    + pid.right->ki*pid.right->err;   
-//  pid.left->err1 = pid.left->err;
-//  pid.right->err1 = pid.right->err;
+  pid.left->ut += pid.kp*(pid.left->err - pid.left->err1)
+      + pid.ki*pid.left->err;  
+  pid.right->ut += pid.kp*(pid.right->err - pid.right->err1)
+    + pid.ki*pid.right->err;   
+  pid.left->err1 = pid.left->err;
+  pid.right->err1 = pid.right->err;
   
   /* 输出限幅 */
   if(pid.left->ut > 4500)
@@ -147,8 +143,8 @@ static void motor_pid_control(motor_speed_t *speed)
     pid.right->ut = -4500.0f;  
   
   /* pwm输出 */
-  left_motor((uint16_t)(5000.0f - pid.left->ut));
-  right_motor((uint16_t)(5000.0f - pid.right->ut));
+  left_motor((uint16_t)(5000.0f + pid.left->ut));
+  right_motor((uint16_t)(5000.0f + pid.right->ut));
   
 }
 

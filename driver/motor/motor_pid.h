@@ -32,9 +32,6 @@ typedef struct _motor_speed
 /* 单个电机的pid参数类型定义 */
 typedef struct __motor_pid
 {
-  float     kp;
-  float     ki;
-  float     kd;
   float     ut;
   float     err;
   float     err1;
@@ -47,6 +44,9 @@ typedef struct _motor_pid
 {
   _motor_pid_t *left;
   _motor_pid_t *right;
+  float     kp;
+  float     ki;
+  float     kd;  
 } motor_pid_t;
 
 

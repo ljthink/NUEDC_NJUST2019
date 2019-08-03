@@ -21,7 +21,6 @@
   设计思路：
   上电后出现调试交互界面，选择电机速度、方向Kp、方向Kd，按核心板wup开始运行整个系统
   遥控器中断后重新回到交互界面。显示当前参数，按键修改后，按核心板wup再次调试
-
   K1 --> 参数切换
   K2 --> 参数减小
   K0 --> 参数增大
@@ -36,8 +35,8 @@ void UI_debugsetting(void)
 {
 
   /* 调用先停车 */
-  left_motor(0);      
-  right_motor(0);
+  left_motor(5000);      
+  right_motor(5000);
   
   /* 重新设置电机PID中的e,ec */
   motor.pidclear(&pid);
@@ -55,13 +54,13 @@ void UI_debugsetting(void)
   sprintf(txt, "-> speed: %3d",motor_speed.left);
   LCD_P6x8Str(0,1,(uint8_t*)txt);
   
-  sprintf(txt, "      Kp: %3.2f",pid.left->kp);
+  sprintf(txt, "      Kp: %3.2f",pid.kp);
   LCD_P6x8Str(0,2,(uint8_t*)txt);
   
-  sprintf(txt, "      Ki: %3.2f",pid.left->ki);
+  sprintf(txt, "      Ki: %3.2f",pid.ki);
   LCD_P6x8Str(0,3,(uint8_t*)txt);  
   
-  sprintf(txt, "      Kd: %3.2f",pid.left->kd);
+  sprintf(txt, "      Kd: %3.2f",pid.kd);
   LCD_P6x8Str(0,4,(uint8_t*)txt);
   
   sprintf(txt, "      start");
@@ -95,13 +94,13 @@ static uint8_t OptionRefresh(uint8_t flag)
     sprintf(txt, "   speed: %3d",motor_speed.left);
     LCD_P6x8Str(0,1,(uint8_t*)txt);
     
-    sprintf(txt, "->    Kp: %3.2f",pid.left->kp);
+    sprintf(txt, "->    Kp: %3.2f",pid.kp);
     LCD_P6x8Str(0,2,(uint8_t*)txt);
     
-    sprintf(txt, "      Ki: %3.2f",pid.left->ki);
+    sprintf(txt, "      Ki: %3.2f",pid.ki);
     LCD_P6x8Str(0,3,(uint8_t*)txt);     
     
-    sprintf(txt, "      Kd: %3.2f",pid.left->kd);
+    sprintf(txt, "      Kd: %3.2f",pid.kd);
     LCD_P6x8Str(0,4,(uint8_t*)txt);
     
     sprintf(txt, "      start");
@@ -114,13 +113,13 @@ static uint8_t OptionRefresh(uint8_t flag)
     sprintf(txt, "   speed: %3d",motor_speed.left);
     LCD_P6x8Str(0,1,(uint8_t*)txt);
     
-    sprintf(txt, "      Kp: %3.2f",pid.left->kp);
+    sprintf(txt, "      Kp: %3.2f",pid.kp);
     LCD_P6x8Str(0,2,(uint8_t*)txt);
     
-    sprintf(txt, "->    Ki: %3.2f",pid.left->ki);
+    sprintf(txt, "->    Ki: %3.2f",pid.ki);
     LCD_P6x8Str(0,3,(uint8_t*)txt);     
     
-    sprintf(txt, "      Kd: %3.2f",pid.left->kd);
+    sprintf(txt, "      Kd: %3.2f",pid.kd);
     LCD_P6x8Str(0,4,(uint8_t*)txt);
     
     sprintf(txt, "      start");
@@ -132,13 +131,13 @@ static uint8_t OptionRefresh(uint8_t flag)
     sprintf(txt, "   speed: %3d",motor_speed.left);
     LCD_P6x8Str(0,1,(uint8_t*)txt);
     
-    sprintf(txt, "      Kp: %3.2f",pid.left->kp);
+    sprintf(txt, "      Kp: %3.2f",pid.kp);
     LCD_P6x8Str(0,2,(uint8_t*)txt);
     
-    sprintf(txt, "      Ki: %3.2f",pid.left->ki);
+    sprintf(txt, "      Ki: %3.2f",pid.ki);
     LCD_P6x8Str(0,3,(uint8_t*)txt);     
     
-    sprintf(txt, "->    Kd: %3.2f",pid.left->kd);
+    sprintf(txt, "->    Kd: %3.2f",pid.kd);
     LCD_P6x8Str(0,4,(uint8_t*)txt);
     
     sprintf(txt, "      start");
@@ -150,13 +149,13 @@ static uint8_t OptionRefresh(uint8_t flag)
     sprintf(txt, "   speed: %3d",motor_speed.left);
     LCD_P6x8Str(0,1,(uint8_t*)txt);
     
-    sprintf(txt, "      Kp: %3.2f",pid.left->kp);
+    sprintf(txt, "      Kp: %3.2f",pid.kp);
     LCD_P6x8Str(0,2,(uint8_t*)txt);
     
-    sprintf(txt, "      Ki: %3.2f",pid.left->ki);
+    sprintf(txt, "      Ki: %3.2f",pid.ki);
     LCD_P6x8Str(0,3,(uint8_t*)txt);     
     
-    sprintf(txt, "      Kd: %3.2f",pid.left->kd);
+    sprintf(txt, "      Kd: %3.2f",pid.kd);
     LCD_P6x8Str(0,4,(uint8_t*)txt);
     
     sprintf(txt, "->    start");
@@ -169,13 +168,13 @@ static uint8_t OptionRefresh(uint8_t flag)
     sprintf(txt, "-> speed: %3d",motor_speed.left);
     LCD_P6x8Str(0,1,(uint8_t*)txt);
     
-    sprintf(txt, "      Kp: %3.1f",pid.left->kp);
+    sprintf(txt, "      Kp: %3.1f",pid.kp);
     LCD_P6x8Str(0,2,(uint8_t*)txt);
     
-    sprintf(txt, "      Ki: %3.1f",pid.left->ki);
+    sprintf(txt, "      Ki: %3.1f",pid.ki);
     LCD_P6x8Str(0,3,(uint8_t*)txt);     
     
-    sprintf(txt, "      Kd: %3.1f",pid.left->kd);
+    sprintf(txt, "      Kd: %3.1f",pid.kd);
     LCD_P6x8Str(0,4,(uint8_t*)txt);
     
     sprintf(txt, "      start");
@@ -199,21 +198,18 @@ static uint8_t OptionPlus(uint8_t flag)
     LCD_P6x8Str(0,1,(uint8_t*)txt);
     return 1;
   case 2:
-    pid.left->kp = pid.left->kp + 0.1;
-    pid.right->kp = pid.right->kp + 0.1;
-    sprintf(txt, "->    Kp: %3.1f",pid.left->kp);
+    pid.kp = pid.kp + 0.1;
+    sprintf(txt, "->    Kp: %3.1f",pid.kp);
     LCD_P6x8Str(0,2,(uint8_t*)txt);
     return 1;
   case 3:
-    pid.left->ki = pid.left->ki + 0.1;
-    pid.right->ki = pid.right->ki + 0.1;
-    sprintf(txt, "->    Ki: %3.1f",pid.left->ki);
+    pid.ki = pid.ki + 0.1;
+    sprintf(txt, "->    Ki: %3.1f",pid.ki);
     LCD_P6x8Str(0,3,(uint8_t*)txt);
     return 1;    
   case 4:
-    pid.left->kd = pid.left->kd + 0.1;
-    pid.right->kd = pid.right->kd + 0.1;
-    sprintf(txt, "->    Kd: %3.1f",pid.left->kd);
+    pid.kd = pid.kd + 0.1;
+    sprintf(txt, "->    Kd: %3.1f",pid.kd);
     LCD_P6x8Str(0,4,(uint8_t*)txt);
     return 1;
   case 5:
@@ -235,21 +231,18 @@ static uint8_t OptionMinus(uint8_t flag)
     LCD_P6x8Str(0,1,(uint8_t*)txt);
     return 1;
   case 2:
-    pid.left->kp = pid.left->kp - 0.1;
-    pid.right->kp = pid.right->kp - 0.1;
-    sprintf(txt, "->    Kp: %3.1f",pid.left->kp);
+    pid.kp = pid.kp - 0.1;
+    sprintf(txt, "->    Kp: %3.1f",pid.kp);
     LCD_P6x8Str(0,2,(uint8_t*)txt);
     return 1;
   case 3:
-    pid.left->ki = pid.left->ki - 0.1;
-    pid.right->ki = pid.right->ki - 0.1;
-    sprintf(txt, "->    Ki: %3.1f",pid.left->ki);
+    pid.ki = pid.ki - 0.1;
+    sprintf(txt, "->    Ki: %3.1f",pid.ki);
     LCD_P6x8Str(0,3,(uint8_t*)txt);
     return 1;
   case 4:
-    pid.left->kd = pid.left->kd - 0.1;
-    pid.right->kd = pid.right->kd - 0.1;
-    sprintf(txt, "->    Kd: %3.1f",pid.left->kd);
+    pid.kd = pid.kd - 0.1;
+    sprintf(txt, "->    Kd: %3.1f",pid.kd);
     LCD_P6x8Str(0,4,(uint8_t*)txt);
     return 1;
   case 5:
@@ -258,4 +251,3 @@ static uint8_t OptionMinus(uint8_t flag)
   }
   return 1;
 }
-
