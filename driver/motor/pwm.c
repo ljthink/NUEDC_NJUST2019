@@ -24,7 +24,14 @@
  *  ----------------
  *  中位1500us
  */
-void servo1(uint16_t highpulse)  
+void pwm_servo(uint16_t *highpulse)
+{
+  PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmA, highpulse[0]);
+  PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmB, highpulse[1]);
+  PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);//设置pwm的 load ok位   如果同时使用subModule 的A B ，可以先设置A的Duty 再设置B的Duty 最后设置pwm的 load ok位  不然pwm容易卡死或者丢失
+}
+
+void servo1(uint16_t highpulse)
 {
     if (highpulse < 500)
       highpulse = 500;
@@ -33,7 +40,7 @@ void servo1(uint16_t highpulse)
     PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmA, highpulse);
     PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);  
 }
-void servo2(uint16_t highpulse)  
+void servo2(uint16_t highpulse)
 {
     if (highpulse < 500)
       highpulse = 500;
@@ -155,14 +162,12 @@ void servo_test(void)
 {
   char txt[16];
   char txtnull[16];
-  int servopwm[2] = {0}; 
-  
+ 
   oled.init();
   oled.ops->clear();
   key.init();
   pwm_init();
-  servo1(SERVO_MID);  //中值
-  servo1(SERVO_MID);  //中值
+
   sprintf(txt, "->PWM1:");
   LCD_P6x8Str(0,0,(uint8_t*)txt); 
   sprintf(txt, "  PWM2:");
@@ -178,10 +183,10 @@ void servo_test(void)
     case no_key:
       break;
     case key_minus:
-      servopwm[pwm_choose] -= 10;
+      servo_highpulse[pwm_choose] -= 10;
       break; 
     case key_plus:           
-      servopwm[pwm_choose] += 10;
+      servo_highpulse[pwm_choose] += 10;
       break;
     case key_ok: /* 选项切换 */
       choose_falg =  (choose_falg ==0 );
@@ -201,12 +206,11 @@ void servo_test(void)
       break;
     }
     
-    sprintf(txt,"%4d",SERVO_MID + servopwm[0]);
-    LCD_P6x8Str(50,0,(uint8_t*)txt); 
-    sprintf(txt,"%4d",SERVO_MID + servopwm[1]);
+    sprintf(txt,"%4d",servo_highpulse[0]);
+    LCD_P6x8Str(50,0,(uint8_t*)txt);
+    sprintf(txt,"%4d",servo_highpulse[1]);
     LCD_P6x8Str(50,1,(uint8_t*)txt);
-    servo1(SERVO_MID + servopwm[0]);
-    servo2(SERVO_MID + servopwm[1]);
+    pwm_servo(servo_highpulse);
     delayms(100);
   }
 }

@@ -3218,6 +3218,12 @@
             <file>
                 <name>$PROJ_DIR$\driver\motor\pwm.h</name>
             </file>
+            <file>
+                <name>$PROJ_DIR$\driver\motor\servo.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\driver\motor\servo.h</name>
+            </file>
         </group>
         <file>
             <name>$PROJ_DIR$\driver\adc.c</name>

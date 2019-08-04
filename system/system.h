@@ -63,6 +63,7 @@
     #include "nrf2401.h"
     #include "spi.h"
     #include "gpt.h"
+    #include "servo.h"
     #include "motor_pid.h"
     #include "direction.h"
     #include "pit.h"
