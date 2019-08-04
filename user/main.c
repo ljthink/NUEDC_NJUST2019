@@ -21,8 +21,8 @@ int main(void)
 {
   /* ---------------------      硬件初始化         -------------------------- */
   system_init();        /* MCU初始化 */
-  servo_test();
-  pwm_test();    /* 单个功能测试函数位置 */
+  //servo_test();
+  //pwm_test();    /* 单个功能测试函数位置 */
   lpuart1_init(115200);         /* 蓝牙发送串口启动 */
   key.init();                   /* 按键启动 */
   led.init();                   /* 指示灯启动 */
@@ -31,12 +31,13 @@ int main(void)
 
   //ExInt_Init();                 /* 中断启动 */
   char txt[16];
- 
+
   motor.init();         /* 车速PID控制初始化.包含ENC,PWM,PID参数初始化 */ 
+  
   UI_debugsetting();
   
   pit_init(kPIT_Chnl_0, 5000); /* 5000us中断 */
-  pit_init(kPIT_Chnl_1, 100000); /* 5000us中断 */ 
+  pit_init(kPIT_Chnl_1, 100000); /* 100ms中断 */ 
 
   while(1)
   {
@@ -45,9 +46,10 @@ int main(void)
 	  {
 	  }
 
-    /* 两个电机转速控制 */
+    /* 5ms控制一次两个电机转速控制 */
     motor.pidcontrol(&motor_speed);
-    
+
+    /* 100ms更新一次 */
     if (status.interrupt_ch1 == 1 )
     {
       sprintf(txt,"ENC1: %6d ",motor_speed.enc_left); 
@@ -55,11 +57,8 @@ int main(void)
       
       sprintf(txt,"ENC2: %6d ",motor_speed.enc_right);
       LCD_P6x8Str(0,1,(uint8_t*)txt);
-      
-      status.interrupt_ch1 = 0;
+      status.interrupt_ch1 = 0; /* 中断复位 */
     }
-    
-    
     
     /* 中断复位 */
     status.interrupt_ch0 = 0;

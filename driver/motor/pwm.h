@@ -67,8 +67,6 @@ static inline void right_motor(short duty)
     PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_0, true);        //设置pwm的 load ok位
 }
 
-
-
 /**
  *  设置舵机角度
  *  ----------------
@@ -76,13 +74,14 @@ static inline void right_motor(short duty)
  *  ----------------
  *  舵机中值3000
  */
-void servo(uint16_t duty);
+void servo1(uint16_t highpulse);
+void servo2(uint16_t highpulse);
 
-
-
-
-
-
+/* 兼容飞卡程序不报错 */
+static inline void servo(uint16_t pwm)
+{
+  servo1(pwm);
+}
 
 void servo_test(void);
 void pwm_test(void);

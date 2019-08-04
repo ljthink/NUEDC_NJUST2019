@@ -29,8 +29,6 @@ static uint8_t OptionRefresh(uint8_t flag);
 static uint8_t OptionPlus(uint8_t flag);
 static uint8_t OptionMinus(uint8_t flag);
 
-
-
 void UI_debugsetting(void)
 {
 

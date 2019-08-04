@@ -45,11 +45,11 @@ static void enc_config(void)
   ENC_GetDefaultConfig(&mEncConfigStruct);
   mEncConfigStruct.decoderWorkMode = kENC_DecoderWorkAsSignalPhaseCountMode;  
   
-  mEncConfigStruct.enableReverseDirection = true;  /* 开启反向计数 */
+  mEncConfigStruct.enableReverseDirection = false;  /* 开启反向计数 */
   ENC_Init(ENC1, &mEncConfigStruct);
   ENC_DoSoftwareLoadInitialPositionValue(ENC1);     /* 位置计数器初始值更新成0. */
 
-  mEncConfigStruct.enableReverseDirection = false;  /* 开启反向计数 */
+  mEncConfigStruct.enableReverseDirection = true;  /* 开启反向计数 */
   ENC_Init(ENC2, &mEncConfigStruct);     
   ENC_DoSoftwareLoadInitialPositionValue(ENC2);     /* 位置计数器初始值更新成0. */ 
 }

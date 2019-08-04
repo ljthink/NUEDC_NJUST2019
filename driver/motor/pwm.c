@@ -20,21 +20,28 @@
 /**
  *  设置舵机pwm(角度)
  *  ----------------
- *  duty   2600-2400
+ *  highpulse 高电平时间，单位us
  *  ----------------
- *  <3000 车左转，>3000车右转
- *  
+ *  中位1500us
  */
-void servo(uint16_t duty)  
+void servo1(uint16_t highpulse)  
 {
-    if (duty < 1000)
-      duty = 1000;
-    if (duty > 2000)
-      duty = 2000;
-    PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmA, duty);
+    if (highpulse < 500)
+      highpulse = 500;
+    if (highpulse > 2500)
+      highpulse = 2500;
+    PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmA, highpulse);
     PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);  
 }
-
+void servo2(uint16_t highpulse)  
+{
+    if (highpulse < 500)
+      highpulse = 500;
+    if (highpulse > 2500)
+      highpulse = 2500;
+    PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmB, highpulse);
+    PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);  
+}
 
 /**
  *  PWM引脚配置
@@ -42,20 +49,20 @@ void servo(uint16_t duty)
 static void pwm_pinconfig(void)
 {
   CLOCK_EnableClock(kCLOCK_Iomuxc);          /* 打开io时钟 */
-  
+
   IOMUXC_SetPinMux(PWM_OUT1_PINMUX, 0U);    //L5
   IOMUXC_SetPinMux(PWM_OUT2_PINMUX, 0U);    //M5
   IOMUXC_SetPinMux(PWM_OUT3_PINMUX, 0U);    //A8
   IOMUXC_SetPinMux(PWM_OUT4_PINMUX, 0U);    //A9
   IOMUXC_SetPinMux(PWM_SERVO1_PINMUX, 0U);
-//  IOMUXC_SetPinMux(PWM_SERVO2_PINMUX, 0U);
-  
+  IOMUXC_SetPinMux(PWM_SERVO2_PINMUX, 0U);
+
   IOMUXC_SetPinConfig(PWM_OUT1_PINMUX, 0x10B0u);  
   IOMUXC_SetPinConfig(PWM_OUT2_PINMUX, 0x10B0u); 
   IOMUXC_SetPinConfig(PWM_OUT3_PINMUX, 0x10B0u); 
   IOMUXC_SetPinConfig(PWM_OUT4_PINMUX, 0x10B0u);
   IOMUXC_SetPinConfig(PWM_SERVO1_PINMUX, 0x10B0u); 
-//  IOMUXC_SetPinConfig(PWM_SERVO2_PINMUX, 0x10B0u);
+  IOMUXC_SetPinConfig(PWM_SERVO2_PINMUX, 0x10B0u);
 }
 
 /**
@@ -68,7 +75,7 @@ static void pwm_config(void)
 {
   CLOCK_SetDiv(kCLOCK_AhbDiv, 0x0); /* Set AHB PODF to 0, divide by 1 */ //600MHz 
   CLOCK_SetDiv(kCLOCK_IpgDiv, 0x2); /* Set IPG PODF to 2, divede by 3 */ //600MHz 3分频 200MHz
-  
+
   uint32_t              pwmSourceClockInHz;   //PWM时钟源
   pwm_config_t          pwmConfig;
   pwm_signal_param_t    pwmSignal[2];     //PWM子模块初始化结构体 
@@ -109,6 +116,7 @@ static void pwm_config(void)
   pwmConfig.reloadLogic       = kPWM_ReloadPwmFullCycle;   //循环输出
   pwmConfig.enableDebugMode   = true;    
   pwmConfig.prescale          = kPWM_Prescale_Divide_32;        //PWM时钟为 pwmSourceClockInHz 32分频 
+  pwmConfig.pairOperation     = kPWM_Independent;
   
   pwmSignal[0].pwmChannel       = kPWM_PwmA;        //默认使用通道A
   pwmSignal[0].level            = kPWM_HighTrue;    //输出电平为高电平
@@ -122,10 +130,12 @@ static void pwm_config(void)
   
   PWM_Init(PWM2, kPWM_Module_3, &pwmConfig);
   PWM2->SM[kPWM_Module_3].DISMAP[0]=0;      //屏蔽故障检测功能
-  PWM_SetupPwm(PWM2, kPWM_Module_3, pwmSignal, 1, kPWM_SignedCenterAligned, 100,pwmSourceClockInHz); 
+  PWM_SetupPwm(PWM2, kPWM_Module_3, pwmSignal, 2, kPWM_SignedCenterAligned, 100,pwmSourceClockInHz); 
   PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);    //设置pwm的 load ok位
   PWM_StartTimer(PWM2, 1u<<kPWM_Module_3);          //开启定时器 
-  servo(SERVO_MID);
+  
+  servo1(SERVO_MID);
+  servo2(SERVO_MID);
 }
 
 void pwm_init(void)
@@ -144,38 +154,60 @@ void pwm_init(void)
 void servo_test(void)
 {
   char txt[16];
-  int servopwm = 0; 
+  char txtnull[16];
+  int servopwm[2] = {0}; 
   
   oled.init();
   oled.ops->clear();
   key.init();
   pwm_init();
-  servo(SERVO_MID);  //中值
-  
+  servo1(SERVO_MID);  //中值
+  servo1(SERVO_MID);  //中值
+  sprintf(txt, "->PWM1:");
+  LCD_P6x8Str(0,0,(uint8_t*)txt); 
+  sprintf(txt, "  PWM2:");
+  LCD_P6x8Str(0,1,(uint8_t*)txt); 
+  sprintf(txtnull, "  ");
+   
+  uint8_t choose_falg = 0;
+  uint8_t pwm_choose = 0;
   while (1)
-  {    
-    switch(key.ops->get(0))  //检测按键
+  {
+    switch(key.ops->get(1))  //检测按键
     {
     case no_key:
       break;
     case key_minus:
-      servopwm -= 10;
-      servo(SERVO_MID + servopwm);//刷新servopwm频率
+      servopwm[pwm_choose] -= 10;
       break; 
     case key_plus:           
-      servopwm += 10;
-      servo(SERVO_MID + servopwm);//刷新servopwm频率
+      servopwm[pwm_choose] += 10;
       break;
-    case key_ok:           
-      servopwm = 0;
-      servo(SERVO_MID + servopwm);//刷新servopwm频率
+    case key_ok: /* 选项切换 */
+      choose_falg =  (choose_falg ==0 );
+      sprintf(txt, "->");
+      if (choose_falg)
+      {
+        LCD_P6x8Str(0,0,(uint8_t*)txt);
+        LCD_P6x8Str(0,1,(uint8_t*)txtnull);
+        pwm_choose = 0;
+      }
+      else
+      {
+        LCD_P6x8Str(0,0,(uint8_t*)txtnull);
+        LCD_P6x8Str(0,1,(uint8_t*)txt); 
+        pwm_choose = 1;
+      }
       break;
     }
-    sprintf(txt, "PWM: %4d", SERVO_MID + servopwm);
-    LCD_P6x8Str(0,0,(uint8_t*)txt); 
-
-    led.ops->reverse(UpLight);     //红灯   
-    delayms(50);
+    
+    sprintf(txt,"%4d",SERVO_MID + servopwm[0]);
+    LCD_P6x8Str(50,0,(uint8_t*)txt); 
+    sprintf(txt,"%4d",SERVO_MID + servopwm[1]);
+    LCD_P6x8Str(50,1,(uint8_t*)txt);
+    servo1(SERVO_MID + servopwm[0]);
+    servo2(SERVO_MID + servopwm[1]);
+    delayms(100);
   }
 }
 
