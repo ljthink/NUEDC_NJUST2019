@@ -27,10 +27,10 @@
  */
 void servo(uint16_t duty)  
 {
-    if (duty < 1280)
-      duty = 1280;
-    if (duty > 1680)
-      duty = 1680;
+    if (duty < 1000)
+      duty = 1000;
+    if (duty > 2000)
+      duty = 2000;
     PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmA, duty);
     PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);  
 }
@@ -79,8 +79,7 @@ static void pwm_config(void)
   pwmConfig.enableDebugMode   = true;    
   pwmConfig.prescale          = kPWM_Prescale_Divide_32;        //PWM时钟为 pwmSourceClockInHz 32分频 
   pwmConfig.pairOperation     = kPWM_ComplementaryPwmA; /* AB通道互补输出，A为主通道 */
-        
-    
+
   pwmSignal[0].pwmChannel       = kPWM_PwmA;        //默认使用通道A
   pwmSignal[0].level            = kPWM_HighTrue;    //输出电平为高电平
   pwmSignal[0].dutyCyclePercent = 50;                //初始占空比 0%
@@ -90,26 +89,43 @@ static void pwm_config(void)
   pwmSignal[1].level            = kPWM_HighTrue;    //输出电平为高电平
   pwmSignal[1].dutyCyclePercent = 50;                //初始占空比 0%
   pwmSignal[1].deadtimeValue    = ((uint64_t)pwmSourceClockInHz * 5000) / 1000000000;      //死区时间
-  
+
   PWM_Init(PWM2, kPWM_Module_0, &pwmConfig);
   PWM2->SM[kPWM_Module_0].DISMAP[0]=0;      //屏蔽故障检测功能 
   /*设置pwm的时钟 = pwmSourceClockInHz，频率 = Frequency 对齐方式 = kPWM_SignedCenterAligned，*/
   PWM_SetupPwm(PWM2, kPWM_Module_0, pwmSignal, 2, kPWM_SignedCenterAligned, 12000,pwmSourceClockInHz); 
   PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_0, true);    //设置pwm的 load ok位
   PWM_StartTimer(PWM2, 1u<<kPWM_Module_0);          //开启定时器
-  
+
   PWM_Init(PWM1, kPWM_Module_3, &pwmConfig);
   PWM1->SM[kPWM_Module_3].DISMAP[0]=0;      //屏蔽故障检测功能
   PWM_SetupPwm(PWM1, kPWM_Module_3, pwmSignal, 2, kPWM_SignedCenterAligned, 12000,pwmSourceClockInHz); 
   PWM_SetPwmLdok(PWM1, 1u<<kPWM_Module_3, true);    //设置pwm的 load ok位
   PWM_StartTimer(PWM1, 1u<<kPWM_Module_3);          //开启定时器 
+ 
   
-//  PWM_Init(PWM2, kPWM_Module_3, &pwmConfig);
-//  PWM2->SM[kPWM_Module_3].DISMAP[0]=0;      //屏蔽故障检测功能
-//  PWM_SetupPwm(PWM2, kPWM_Module_3, &pwmSignal, 1, kPWM_SignedCenterAligned, 100,pwmSourceClockInHz); 
-//  PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);    //设置pwm的 load ok位
-//  PWM_StartTimer(PWM2, 1u<<kPWM_Module_3);          //开启定时器 
-//  servo(SERVO_MID);
+  
+  PWM_GetDefaultConfig(&pwmConfig);  //得到默认的PWM初始化结构体
+  pwmConfig.reloadLogic       = kPWM_ReloadPwmFullCycle;   //循环输出
+  pwmConfig.enableDebugMode   = true;    
+  pwmConfig.prescale          = kPWM_Prescale_Divide_32;        //PWM时钟为 pwmSourceClockInHz 32分频 
+  
+  pwmSignal[0].pwmChannel       = kPWM_PwmA;        //默认使用通道A
+  pwmSignal[0].level            = kPWM_HighTrue;    //输出电平为高电平
+  pwmSignal[0].dutyCyclePercent = 0;                //初始占空比 0%
+  pwmSignal[0].deadtimeValue    = 0;                //死区时间
+  /*当AB两通道同时使用 才有作用*/
+  pwmSignal[1].pwmChannel       = kPWM_PwmB;        // 使用PWMB
+  pwmSignal[1].level            = kPWM_HighTrue;    //输出电平为高电平
+  pwmSignal[1].dutyCyclePercent = 0;                //初始占空比 0%
+  pwmSignal[1].deadtimeValue    = 0;      //死区时间
+  
+  PWM_Init(PWM2, kPWM_Module_3, &pwmConfig);
+  PWM2->SM[kPWM_Module_3].DISMAP[0]=0;      //屏蔽故障检测功能
+  PWM_SetupPwm(PWM2, kPWM_Module_3, pwmSignal, 1, kPWM_SignedCenterAligned, 100,pwmSourceClockInHz); 
+  PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);    //设置pwm的 load ok位
+  PWM_StartTimer(PWM2, 1u<<kPWM_Module_3);          //开启定时器 
+  servo(SERVO_MID);
 }
 
 void pwm_init(void)
