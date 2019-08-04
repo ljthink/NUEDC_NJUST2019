@@ -32,8 +32,8 @@ motor_pid_t pid = {
 
 /* 目标电机速度，初始为0 */
 motor_speed_t motor_speed = {
-    .left = 0,
-    .right = 0,
+    .left = 35,
+    .right = 35,
 };
 
 /* ---------------------------- 方法声明 ------------------------------------ */
@@ -61,7 +61,7 @@ static void motor_pid_device_init(void)
 {
   enc_init();
   pwm_init();
-  motor.pidchange(&pid,4,1,0);
+  motor.pidchange(&pid,1,0,0);
 }
 
 static void motor_pid_clear(motor_pid_t* base)
@@ -89,64 +89,46 @@ static void motor_pid_change(motor_pid_t* base,float p,float i,float d)
 /* 电机PI控制 */
 static void motor_pid_control(motor_speed_t *speed)
 {
+  float pwm1,pwm2;
   /* =后面为编码器读到的数字 */
-  speed->enc_left = (int16_t)ENC_GetPositionDifferenceValue(ENC1);  //得到编码器微分值
+  speed->enc_left  = (int16_t)ENC_GetPositionDifferenceValue(ENC1);  //得到编码器微分值
   speed->enc_right = (int16_t)ENC_GetPositionDifferenceValue(ENC2);  //得到编码器微分值
 
   /* 获得偏差 */
   pid.left->err  = speed->left  - speed->enc_left;
   pid.right->err = speed->right - speed->enc_right;
- 
-  /* 偏差过大开环控制 */
-//  if (pid.left->err > 100 || pid.left->err < -100)
-//  {
-//    pid.left->ut = pid.left->err*20.0f ; /* 偏差过大，直接给到限幅以上 */
-//    pid.left->int_err = 0; /* 积分清零 */
-//  }
-//  else
-//  {
-//    if (pid.left->int_err<1000 && pid.left->int_err>-1000)  /* 积分限幅 */
-//      pid.left->int_err = pid.left->int_err + pid.left->err; /* 偏差积分 */
-//    pid.left->ut = pid.kp*pid.left->err 
-//                 + pid.ki*pid.left->int_err;
-//  }
-//
-//  /* 右电机 */
-//  if (pid.right->err > 100 || pid.right->err < -100)
-//  {
-//    pid.right->ut = pid.right->err*20.0f;
-//    pid.right->int_err = 0;
-//  }
-//  else
-//  {
-//    if(pid.right->int_err<1000 && pid.right->int_err>-1000)
-//      pid.right->int_err = pid.right->int_err + pid.right->err;
-//    pid.right->ut = pid.kp*pid.right->err
-//                  + pid.ki*pid.right->int_err;
-//  }
 
   /* 增量式PI控制，输出为编码器的控制值 */
-  pid.left->ut  += (pid.kp*(pid.left->err  - pid.left->err1) + pid.ki*pid.left->err);           
-  pid.right->ut += (pid.kp*(pid.right->err - pid.right->err1) + pid.ki*pid.right->err);
-                  
-  /* 偏差保存 */  
+  pid.left->ut  += pid.kp*(pid.left->err  - pid.left->err1)  + pid.ki*pid.left->err;           
+  pid.right->ut += pid.kp*(pid.right->err - pid.right->err1) + pid.ki*pid.right->err;
+
+  /* 编码器对应到PWM */
+  if (pid.left->ut > 0 )
+    pwm1 = 6.7749*pid.left->ut + 5310;
+  else
+    pwm1 = 6.9122*pid.left->ut + 4898;
+  if (pid.right->ut > 0)
+    pwm2 = 6.8252*pid.right->ut + 5290;
+  else
+    pwm2 = 7.2176*pid.right->ut + 4890;
+  /* 偏差保存 */
   pid.left->err1  = pid.left->err;
   pid.right->err1 = pid.right->err;
-  
+
   /* 输出限幅 */
-  if(pid.left->ut > 4000)
-    pid.left->ut = 4000.0f;
-  else if (pid.left->ut < -4000)
-    pid.left->ut = -4000.0f;
-  
-  if(pid.right->ut > 4000)
-    pid.right->ut = 4000.0f;
-  else if (pid.right->ut < -4000)
-    pid.right->ut = -4000.0f;  
-  
+  if(pwm1 > 9000)
+    pwm1 = 9000.0f;
+  else if (pwm1 < -9000)
+    pwm1 = -9000.0f;
+
+  if(pwm2 > 9000)
+    pwm2 = 9000.0f;
+  else if (pwm2 < -9000)
+    pwm2 = -9000.0f;  
+
   /* pwm输出 */
-  left_motor((uint16_t)(5000.0f + pid.left->ut));
-  right_motor((uint16_t)(5000.0f + pid.right->ut));
+  left_motor((uint16_t)(pwm1));
+  right_motor((uint16_t)(pwm2));
   
 }
 

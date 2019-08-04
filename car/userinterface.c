@@ -190,8 +190,8 @@ static uint8_t OptionPlus(uint8_t flag)
   switch(flag)
   {
   case 1:
-    motor_speed.left = motor_speed.left + 10;
-    motor_speed.right = motor_speed.right + 10;
+    motor_speed.left = motor_speed.left + 5;
+    motor_speed.right = motor_speed.right + 5;
     sprintf(txt, "-> speed: %3d",motor_speed.left);
     LCD_P6x8Str(0,1,(uint8_t*)txt);
     return 1;

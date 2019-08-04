@@ -21,7 +21,7 @@ int main(void)
 {
   /* ---------------------      硬件初始化         -------------------------- */
   system_init();        /* MCU初始化 */
-  servo_test();
+  //servo_test();
   //pwm_test();    /* 单个功能测试函数位置 */
   lpuart1_init(115200);         /* 蓝牙发送串口启动 */
   key.init();                   /* 按键启动 */
@@ -36,7 +36,7 @@ int main(void)
   
   UI_debugsetting();
   
-  pit_init(kPIT_Chnl_0, 5000); /* 5000us中断 */
+  pit_init(kPIT_Chnl_0, 10000); /* 10ms中断 */
   pit_init(kPIT_Chnl_1, 100000); /* 100ms中断 */ 
 
   while(1)
@@ -60,6 +60,7 @@ int main(void)
       status.interrupt_ch1 = 0; /* 中断复位 */
     }
     
+    printf("%3d\n",motor_speed.enc_left);
     /* 中断复位 */
     status.interrupt_ch0 = 0;
   }
