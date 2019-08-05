@@ -89,19 +89,26 @@ static void motor_pid_change(motor_pid_t* base,float p,float i,float d)
 /* 电机PI控制 */
 static void motor_pid_control(motor_speed_t *speed)
 {
-  float pwm1,pwm2;
-  /* =后面为编码器读到的数字 */
+  float pwm1,pwm2,alpha1,alpha2;
+  /* = 后面为编码器读到的数字 */
   speed->enc_left  = (int16_t)ENC_GetPositionDifferenceValue(ENC1);  //得到编码器微分值
   speed->enc_right = (int16_t)ENC_GetPositionDifferenceValue(ENC2);  //得到编码器微分值
 
-  /* 获得偏差 */
+  /* 偏差 = 目标速度 - 实际速度 */
   pid.left->err  = speed->left  - speed->enc_left;
   pid.right->err = speed->right - speed->enc_right;
+  
+  /* 积分分离 */
+  alpha1 = (float)((pid.left->err  < 10) && (pid.left->err  > -10));
+  alpha2 = (float)((pid.right->err < 10) && (pid.right->err > -10));
 
-  /* 增量式PI控制，输出为编码器的控制值 */
-  pid.left->ut  += pid.kp*(pid.left->err  - pid.left->err1)  + pid.ki*pid.left->err;           
-  pid.right->ut += pid.kp*(pid.right->err - pid.right->err1) + pid.ki*pid.right->err;
-
+  pid.left->int_err  = (alpha1 > 0 ? pid.left->int_err  + pid.left->err  : 0 );
+  pid.right->int_err = (alpha2 > 0 ? pid.right->int_err + pid.right->err : 0 );
+  
+  /* 位置式PI控制，输出为编码器的控制值 u(k)=Kp*e(k)+α*Ki*Σe(k) */
+  pid.left->ut  = pid.kp*pid.left->err  + alpha1*pid.ki*pid.left->int_err;           
+  pid.right->ut = pid.kp*pid.right->err + alpha2*pid.ki*pid.right->int_err;
+  
   /* 编码器对应到PWM */
   if (pid.left->ut > 0 )
     pwm1 = 6.7749*pid.left->ut + 5310;
@@ -111,9 +118,6 @@ static void motor_pid_control(motor_speed_t *speed)
     pwm2 = 6.8252*pid.right->ut + 5290;
   else
     pwm2 = 7.2176*pid.right->ut + 4890;
-  /* 偏差保存 */
-  pid.left->err1  = pid.left->err;
-  pid.right->err1 = pid.right->err;
 
   /* 输出限幅 */
   if(pwm1 > 9000)
@@ -145,28 +149,21 @@ static void motor_pid_test(void)
   UI_debugsetting();
 
   oled.ops->clear();
- 
+  char txt[16];
   pit_init(kPIT_Chnl_0, 10000);
   
   while (1)
   {        
 	  while (status.interrupt_ch0 == 0)
 	  {
-		  /* 遥控中断给出调试标志位 */
-//		  if(status.debug_mode == 1)
-//			  UI_debugsetting();
 	  }
     
     motor_pid_control(&motor_speed);
     
     printf("%d\n",motor_speed.enc_left);
-   
-//    sprintf(txt,"ENC1:  %5d ",motor_speed.enc_left); 
-//    LCD_P6x8Str(0,0,(uint8_t*)txt);
-//
-//    sprintf(txt,"ENC2:  %5d ",motor_speed.enc_right); 
-//    LCD_P6x8Str(0,1,(uint8_t*)txt);
-    
+
+    sprintf(txt,"ENC2:  %5d ",motor_speed.enc_right); 
+    LCD_P6x8Str(0,1,(uint8_t*)txt);
     /* 中断复位 */
     status.interrupt_ch0 = 0;
   }

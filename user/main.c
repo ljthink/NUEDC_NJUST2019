@@ -21,6 +21,7 @@ int main(void)
 {
   /* ---------------------      硬件初始化         -------------------------- */
   system_init();        /* MCU初始化 */
+  //motor.pidtest(); /* pid参数调节参数 */
   //servo_test();
   //pwm_test();    /* 单个功能测试函数位置 */
   lpuart1_init(115200);         /* 蓝牙发送串口启动 */
