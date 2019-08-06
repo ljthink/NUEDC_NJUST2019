@@ -132,7 +132,6 @@ static void motor_pid_control(motor_speed_t *speed)
 }
 
 
-
 static void motor_pid_test(void)
 {
   lpuart1_init(115200);         /* 蓝牙发送串口启动 */
@@ -148,7 +147,7 @@ static void motor_pid_test(void)
   pit_init(kPIT_Chnl_0, 10000);
   
   while (1)
-  {        
+  {
 	  while (status.interrupt_ch0 == 0)
 	  {
 	  }

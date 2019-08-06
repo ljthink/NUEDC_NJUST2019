@@ -74,13 +74,13 @@ void lpuart1_init(uint32_t bound)
 	lpuart1_config.parityMode = kLPUART_ParityDisabled;		//无奇偶校验
 	lpuart1_config.enableRx = true;							//使能接收
 	lpuart1_config.enableTx = true;							//使能发送
-	
+  
 	LPUART_Init(LPUART1,&lpuart1_config,freq);				//初始化LPUART1 
     
 #if EN_LPUART1_RX									        //是否需要开启中断?	
 	//LPUART中断设置
 	LPUART_EnableInterrupts(LPUART1,kLPUART_RxDataRegFullInterruptEnable); //使能接收中断
-    NVIC_SetPriority(LPUART1_IRQn,NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5,0));
+  NVIC_SetPriority(LPUART1_IRQn,NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5,0));
 	EnableIRQ(LPUART1_IRQn);	                            //使能LPUART1中断
 #endif
 }	
@@ -90,10 +90,33 @@ void lpuart1_init(uint32_t bound)
 void LPUART1_IRQHandler(void)
 {
   uint8_t res = 0;
+  uint8_t recive_flag = 0;
+  static uint8_t data_num = 10;
+  
   if((LPUART1->STAT)&kLPUART_RxDataRegFullFlag) //接收中断
   {
     res = LPUART1->DATA;					//读取数据
+    printf("%c",res);
     
+//    /* 0x55 0x53 数据头判断 */
+//    if (res == 0x55 && data_num == 10) /* 帧头条件 */
+//    {
+//      data_num = 1;
+//      
+//    }
+//    if (res == 0x53 && data_num == 1)  /* 欧拉角条件 */
+//    {
+//      data_num = 2;
+//      recive_flag = 1;
+//    }
+//    
+//    if (data_num > 1 && recive_flag == 1) /* 姿态数据 */
+//    {
+//      hwt_905buff[data_num] = res;
+//      data_num ++ ;
+//      if(data_num == 10)
+//        recive_flag = 0;
+//    }
   }
   __DSB();				//数据同步屏蔽指令
 }

@@ -3682,6 +3682,12 @@
             <name>$PROJ_DIR$\driver\gpt.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\driver\hwt905.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\driver\hwt905.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\driver\iic.c</name>
         </file>
         <file>
