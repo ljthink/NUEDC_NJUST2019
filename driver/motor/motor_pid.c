@@ -18,7 +18,6 @@
 #include "system.h"
 
 /*--------------------- 电机转速闭环使用到的的全局参数 -----------------------*/
-short speedvalue;
 
 /* 单个电机的速度PID参数 */
 _motor_pid_t motor_leftpid;
@@ -61,20 +60,16 @@ static void motor_pid_device_init(void)
 {
   enc_init();
   pwm_init();
-  motor.pidchange(&pid,1,0,0);
+  motor.pidchange(&pid,15,0.5,0);
 }
 
 static void motor_pid_clear(motor_pid_t* base)
 {
   base->left->err = 0;
-  base->left->err1 = 0;
-  base->left->err2 = 0;
   base->left->int_err = 0;
   base->left->ut = 0;
   
   base->right->err = 0;
-  base->right->err1 = 0;
-  base->right->err2 = 0;
   base->right->int_err = 0;
   base->right->ut = 0;
 }
@@ -97,14 +92,14 @@ static void motor_pid_control(motor_speed_t *speed)
   /* 偏差 = 目标速度 - 实际速度 */
   pid.left->err  = speed->left  - speed->enc_left;
   pid.right->err = speed->right - speed->enc_right;
-  
+
   /* 积分分离 */
-  alpha1 = (float)((pid.left->err  < 10) && (pid.left->err  > -10));
-  alpha2 = (float)((pid.right->err < 10) && (pid.right->err > -10));
+  alpha1 = (float)((pid.left->err  < speed->left*0.368)  && (pid.left->err  > -speed->left*0.368));
+  alpha2 = (float)((pid.right->err < speed->right*0.368) && (pid.right->err > -speed->right*0.368));
 
   pid.left->int_err  = (alpha1 > 0 ? pid.left->int_err  + pid.left->err  : 0 );
   pid.right->int_err = (alpha2 > 0 ? pid.right->int_err + pid.right->err : 0 );
-  
+
   /* 位置式PI控制，输出为编码器的控制值 u(k)=Kp*e(k)+α*Ki*Σe(k) */
   pid.left->ut  = pid.kp*pid.left->err  + alpha1*pid.ki*pid.left->int_err;           
   pid.right->ut = pid.kp*pid.right->err + alpha2*pid.ki*pid.right->int_err;

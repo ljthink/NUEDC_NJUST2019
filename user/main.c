@@ -34,7 +34,7 @@ int main(void)
   char txt[16];
 
   motor.init();         /* 车速PID控制初始化.包含ENC,PWM,PID参数初始化 */ 
-  
+
   UI_debugsetting();
   
   pit_init(kPIT_Chnl_0, 10000); /* 10ms中断 */
