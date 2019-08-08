@@ -1,6 +1,7 @@
 #include "system.h"
 
-uint8_t hwt_905buff[11] = {0x55,0x53};
+/* 30字节的缓冲区 */
+uint8_t hwt_905buff[30] = {0};
 attitude_data_t attitude;
 
 void hwt_905_calculate(uint8_t buff[])
@@ -14,13 +15,12 @@ void hwt_905_calculate(uint8_t buff[])
   }
 }
 
-
-
 void hwt_905_test(void)
 {
   char txt[16];
   NVIC_SetPriorityGrouping(2);  /* 2: 4个抢占优先级 4个子优先级*/
   oled.init();                   /* LCD启动 */
+  motor.init();
   pit_init(kPIT_Chnl_1, 100000); /* 100ms中断 */
   lpuart1_init(9600);         /* 蓝牙发送串口启动 */
   while(1)
@@ -37,7 +37,12 @@ void hwt_905_test(void)
     LCD_P6x8Str(0,0,(uint8_t*)txt);
     
     sprintf(txt,"Z: %5.2f",attitude.Yaw);
-    LCD_P6x8Str(0,2,(uint8_t*)txt);      
+    LCD_P6x8Str(0,2,(uint8_t*)txt);   
+    
+    // -90 ~ +90   ->  500 ~ 2500
+    servo_highpulse[0] = 11.1*attitude.Roll + 1500;
+    servo_highpulse[1] = 5.56*attitude.Yaw + 1500;
+    pwm_servo(servo_highpulse);
     
     status.interrupt_ch1 = 0; /* 中断复位 */
   }  

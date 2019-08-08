@@ -3670,6 +3670,12 @@
             <name>$PROJ_DIR$\driver\ANO_DT.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\driver\elec_gun.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\driver\elec_gun.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\driver\extern_interrupt.c</name>
         </file>
         <file>

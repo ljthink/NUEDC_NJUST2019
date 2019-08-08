@@ -21,7 +21,9 @@ int main(void)
 {
   /* ---------------------      硬件初始化         -------------------------- */
   system_init();        /* MCU初始化 */
-  hwt_905_test();
+  elec_signalled_test();
+  //encoder_distance_test();
+  //hwt_905_test();
   //encoder_test();
   //motor.pidtest(); /* pid参数调节参数 */
   //servo_test();

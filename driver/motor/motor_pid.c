@@ -68,7 +68,7 @@ static void motor_pid_clear(motor_pid_t* base)
   base->left->err = 0;
   base->left->int_err = 0;
   base->left->ut = 0;
-  
+
   base->right->err = 0;
   base->right->int_err = 0;
   base->right->ut = 0;

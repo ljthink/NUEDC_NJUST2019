@@ -90,33 +90,16 @@ void lpuart1_init(uint32_t bound)
 void LPUART1_IRQHandler(void)
 {
   uint8_t res = 0;
-  uint8_t recive_flag = 0;
-  static uint8_t data_num = 10;
+  static uint8_t i = 0;
   
   if((LPUART1->STAT)&kLPUART_RxDataRegFullFlag) //接收中断
   {
     res = LPUART1->DATA;					//读取数据
-    printf("%c",res);
     
-//    /* 0x55 0x53 数据头判断 */
-//    if (res == 0x55 && data_num == 10) /* 帧头条件 */
-//    {
-//      data_num = 1;
-//      
-//    }
-//    if (res == 0x53 && data_num == 1)  /* 欧拉角条件 */
-//    {
-//      data_num = 2;
-//      recive_flag = 1;
-//    }
-//    
-//    if (data_num > 1 && recive_flag == 1) /* 姿态数据 */
-//    {
-//      hwt_905buff[data_num] = res;
-//      data_num ++ ;
-//      if(data_num == 10)
-//        recive_flag = 0;
-//    }
+    hwt_905buff[i] = res;
+    i++;
+    if(i==11)
+      i = 0;
   }
   __DSB();				//数据同步屏蔽指令
 }

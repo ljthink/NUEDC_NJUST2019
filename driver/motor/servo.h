@@ -20,7 +20,7 @@
 #define _SERVO_H
 
 extern uint16_t servo_highpulse[2];
-
+void servo_test(void);
 
 
 

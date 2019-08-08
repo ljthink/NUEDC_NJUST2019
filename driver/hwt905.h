@@ -10,7 +10,7 @@ typedef struct _attitude_data
 } attitude_data_t;
 
 
-extern uint8_t hwt_905buff[11];
+extern uint8_t hwt_905buff[30];
 
 
 void hwt_905_test(void);

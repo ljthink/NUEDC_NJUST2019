@@ -74,9 +74,10 @@ static inline void right_motor(short duty)
  *  ----------------
  *  舵机中值3000
  */
-void pwm_servo(uint16_t *highpulse);
+
 void servo1(uint16_t highpulse);
 void servo2(uint16_t highpulse);
+void pwm_servo(uint16_t *highpulse);
 
 /* 兼容飞卡程序不报错 */
 static inline void servo(uint16_t pwm)
@@ -85,7 +86,7 @@ static inline void servo(uint16_t pwm)
   pwm_servo(temp);
 }
 
-void servo_test(void);
+
 void pwm_test(void);
 
 

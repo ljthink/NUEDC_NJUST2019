@@ -39,7 +39,7 @@
 //#define ENC_LB_MUX  IOMUXC_GPIO_B1_03_XBAR1_INOUT17
 //#define ENC_RA_MUX  IOMUXC_GPIO_SD_B0_04_XBAR1_INOUT08
 //#define ENC_RB_MUX  IOMUXC_GPIO_SD_B0_05_XBAR1_INOUT09
-//
+
 //#define ENC_LA_CHANNEL  kXBARA1_InputIomuxXbarIn23
 //#define ENC_LB_CHANNEL  kXBARA1_InputIomuxXbarInout17
 //#define ENC_RA_CHANNEL  kXBARA1_InputIomuxXbarInout09
@@ -56,8 +56,8 @@
  */
 void enc_init(void);
 void encoder_test(void);
-void encoder_position_test(void);
-
+void encoder_speed_test(void);
+void encoder_distance_test(void);
 
 
 #endif 

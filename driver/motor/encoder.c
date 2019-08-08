@@ -17,6 +17,12 @@
 
 #include "system.h"	
 
+
+
+
+
+
+
 static void enc_pinconfig(void)
 {
   CLOCK_EnableClock(kCLOCK_Iomuxc);  /* 打开io时钟 */ 
@@ -85,28 +91,55 @@ void encoder_test(void)
 }
 
 
-void encoder_position_test(void)
+void encoder_speed_test(void)
 {   
   oled.init();
   oled.ops->clear();
   key.init();
   enc_init();
-  motor.init();
-  
-  short s1, s2;
   
   char txt[16];
   while (1)
-  { 
+  {
     sprintf(txt,"ENC1: %6d ",motor_speed.enc_left); 
     LCD_P6x8Str(0,0,(uint8_t*)txt);
     
     sprintf(txt,"ENC2: %6d ",motor_speed.enc_right);
     LCD_P6x8Str(0,1,(uint8_t*)txt);
-    
-    if (s2>4000)
-      servo(1550);
-     
+   
     delayms(100);       //延时0.1秒
   }
 }
+
+void encoder_distance_test(void)
+{
+  oled.init();
+  motor.init();
+  key.init();
+  int dis1,dis2;
+  char txt[16];
+  while(1)
+  {
+    if (key.ops->get(0) > no_key ) /* 任意按键清除 */
+    {
+      ENC_DoSoftwareLoadInitialPositionValue(ENC1);
+      ENC_DoSoftwareLoadInitialPositionValue(ENC2);  
+    }
+
+    dis1 = ENC_GetPositionValue(ENC1);
+    dis2 = ENC_GetPositionValue(ENC2);
+    
+    sprintf(txt,"%6d",dis1);
+    LCD_P6x8Str(0,0,(uint8_t*)txt);
+    sprintf(txt,"%6d",dis2);
+    LCD_P6x8Str(0,1,(uint8_t*)txt);
+    
+    delayms(10);
+  } 
+}
+
+
+
+
+
+

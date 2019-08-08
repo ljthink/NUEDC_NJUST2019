@@ -117,8 +117,6 @@ static void pwm_config(void)
   PWM_SetPwmLdok(PWM1, 1u<<kPWM_Module_3, true);    //设置pwm的 load ok位
   PWM_StartTimer(PWM1, 1u<<kPWM_Module_3);          //开启定时器 
  
-  
-  
   PWM_GetDefaultConfig(&pwmConfig);  //得到默认的PWM初始化结构体
   pwmConfig.reloadLogic       = kPWM_ReloadPwmFullCycle;   //循环输出
   pwmConfig.enableDebugMode   = true;    
@@ -151,69 +149,6 @@ void pwm_init(void)
   pwm_config();
 }
 
-
-/**
- *  舵机测试
- *  ----------------
- *  中值3000 频率200hz
- *  
- */
-void servo_test(void)
-{
-  char txt[16];
-  char txtnull[16];
- 
-  oled.init();
-  oled.ops->clear();
-  key.init();
-  pwm_init();
-
-  sprintf(txt, "->PWM1:");
-  LCD_P6x8Str(0,0,(uint8_t*)txt); 
-  sprintf(txt, "  PWM2:");
-  LCD_P6x8Str(0,1,(uint8_t*)txt); 
-  sprintf(txtnull, "  ");
-   
-  uint8_t choose_falg = 0;
-  uint8_t pwm_choose = 0;
-  while (1)
-  {
-    switch(key.ops->get(1))  //检测按键
-    {
-    case no_key:
-      break;
-    case key_minus:
-      servo_highpulse[pwm_choose] -= 10;
-      break; 
-    case key_plus:           
-      servo_highpulse[pwm_choose] += 10;
-      break;
-    case key_ok: /* 选项切换 */
-      choose_falg =  (choose_falg ==0 );
-      sprintf(txt, "->");
-      if (choose_falg)
-      {
-        LCD_P6x8Str(0,0,(uint8_t*)txt);
-        LCD_P6x8Str(0,1,(uint8_t*)txtnull);
-        pwm_choose = 0;
-      }
-      else
-      {
-        LCD_P6x8Str(0,0,(uint8_t*)txtnull);
-        LCD_P6x8Str(0,1,(uint8_t*)txt); 
-        pwm_choose = 1;
-      }
-      break;
-    }
-    
-    sprintf(txt,"%4d",servo_highpulse[0]);
-    LCD_P6x8Str(50,0,(uint8_t*)txt);
-    sprintf(txt,"%4d",servo_highpulse[1]);
-    LCD_P6x8Str(50,1,(uint8_t*)txt);
-    pwm_servo(servo_highpulse);
-    delayms(100);
-  }
-}
 
 void pwm_test(void)
 {   

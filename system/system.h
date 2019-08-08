@@ -63,14 +63,14 @@
     #include "nrf2401.h"
     #include "spi.h"
     #include "gpt.h"
-    #include "hwt905.h"
     #include "servo.h"
+    #include "hwt905.h"
     #include "motor_pid.h"
     #include "direction.h"
     #include "pit.h"
     #include "test.h"
     #include "extern_interrupt.h"
-
+#include "elec_gun.h"
     #include "speed.h"
 
     
