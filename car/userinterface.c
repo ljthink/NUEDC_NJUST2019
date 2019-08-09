@@ -31,14 +31,6 @@ static uint8_t OptionMinus(uint8_t flag);
 
 void UI_debugsetting(void)
 {
-
-  /* 调用先停车 */
-  left_motor(5000);      
-  right_motor(5000);
-  
-  /* 重新设置电机PID中的e,ec */
-  motor.pidclear(&pid);
-
   char txt[16];
   uint8_t whichkey;
   uint8_t choose_flag = 1;//当前选项记录
