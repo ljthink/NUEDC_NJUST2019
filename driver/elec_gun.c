@@ -63,17 +63,21 @@ void elec_gun_pin_init(void)
 
 void elec_cap_voltage_test(void)
 {
-  oled.init();
+  key.init();                   /* 按键启动 */
+  led.init();                   /* 指示灯启动 */
+  NVIC_SetPriorityGrouping(2);  /* 2: 4个抢占优先级 4个子优先级*/
+  oled.init();                   /* LCD启动 */
   adc.init();
   char txt[16];
   uint16_t Vc;
+  
   while(1)
   {
     Vc = cap_voltage();
-    sprintf(txt,"%3d",Vc);
-    oled.ops->word(0,0,(uint8_t*)txt);
+    sprintf(txt,"Uc: %3d V",Vc); 
+    LCD_P6x8Str(0,0,(uint8_t*)txt);
     delayms(50);
-  
+    
   }
 
 }
