@@ -21,7 +21,7 @@ int main(void)
 {
   /* ---------------------      硬件初始化         -------------------------- */
   system_init();        /* MCU初始化 */
-  elec_signalled_test();
+  elec_cap_voltage_test();
   //encoder_distance_test();
   //hwt_905_test();
   //encoder_test();

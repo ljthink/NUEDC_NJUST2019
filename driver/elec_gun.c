@@ -5,97 +5,81 @@ static void elec_output_pin_init(void)
 {
   CLOCK_EnableClock(kCLOCK_Iomuxc);           // IO口时钟使能
 
-  /* 三级发射指示灯 */
-  /* J12 */
-  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_06_GPIO1_IO22, 0U); 
-  /* K10 */
-  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_07_GPIO1_IO23, 0U);
-  /* J11 */
-  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_00_GPIO1_IO16, 0U);
+  /* 充电、发射控制引脚 */
+  /* H2 */
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B0_04_GPIO3_IO16, 0U);  /* 充电，1有效 */
+  /* J2 */
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B0_05_GPIO3_IO17, 0U);  /* 发射，0有效 */
 
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_06_GPIO1_IO22, 0x10B0u);
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_07_GPIO1_IO23, 0x10B0u);
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_00_GPIO1_IO16, 0x10B0u);
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B0_04_GPIO3_IO16, 0x10B0u);
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B0_05_GPIO3_IO17, 0x10B0u);
 
 
   gpio_pin_config_t GPIO_Output_Config = {kGPIO_DigitalOutput, //GPIO为输出方向
-                                        1,                     //高电平
+                                        0,                     
                                         kGPIO_NoIntmode        //非中断模式
                                         };
 
-  GPIO_PinInit(GPIO1,22, &GPIO_Output_Config);
-  GPIO_PinInit(GPIO1,23, &GPIO_Output_Config);
-  GPIO_PinInit(GPIO1,16, &GPIO_Output_Config);
+  GPIO_PinInit(GPIO3,16, &GPIO_Output_Config);
+  
+  GPIO_Output_Config.outputLogic = 1;
+  GPIO_PinInit(GPIO3,17, &GPIO_Output_Config);
+
 }
 
 
 static void elec_input_pin_init(void)
 {
   CLOCK_EnableClock(kCLOCK_Iomuxc);          // IO口时钟使能
-  /* L12 */
-  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_04_GPIO1_IO20,0U);
-  /* K11 */
-  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_01_GPIO1_IO17,0U);
-  /* M13 */
-  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_09_GPIO1_IO25,0U);
-  
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_04_GPIO1_IO20,0xF080);
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_01_GPIO1_IO17,0xF080);
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_09_GPIO1_IO25,0xF080);
-  
-  gpio_pin_config_t GPIO_Input_Config = {kGPIO_DigitalInput,    //GPIO为输入方向
-                               1,                    //高电平
-                               kGPIO_NoIntmode,      //不触发中断
-                               };
-  
-  GPIO_PinInit(GPIO1,20,&GPIO_Input_Config);        // GPIO输入口，非中断
-  GPIO_PinInit(GPIO1,17,&GPIO_Input_Config);        // GPIO输入口，非中断
-  GPIO_PinInit(GPIO1,25,&GPIO_Input_Config);        // GPIO输入口，非中断
-  
+//  /* L13 */
+//  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_10_GPIO1_IO26,0U);
+//  /* H12 */
+//  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_12_GPIO1_IO28,0U);
+//  /* G12 */
+//  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_14_GPIO1_IO30,0U);
+//  
+//  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_10_GPIO1_IO26,0xF080);
+//  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_12_GPIO1_IO28,0xF080);
+//  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_14_GPIO1_IO30,0xF080);
+//  
+//  gpio_pin_config_t GPIO_Input_Config = {kGPIO_DigitalInput,    //GPIO为输入方向
+//                               1,                    //高电平
+//                               kGPIO_NoIntmode,      //不触发中断
+//                               };
+//  
+//  GPIO_PinInit(GPIO1,26,&GPIO_Input_Config);        // GPIO输入口，非中断
+//  GPIO_PinInit(GPIO1,28,&GPIO_Input_Config);        // GPIO输入口，非中断
+//  GPIO_PinInit(GPIO1,30,&GPIO_Input_Config);        // GPIO输入口，非中断
 }
 
 
-
-void elec_signalled_test(void)
+void elec_gun_pin_init(void)
 {
   elec_output_pin_init();
-  //elec_input_pin_init();
-  key.init();
+  elec_input_pin_init();
+}
+
+
+
+void elec_cap_voltage_test(void)
+{
   oled.init();
+  adc.init();
   char txt[16];
-  
+  uint16_t Vc;
   while(1)
   {
-//    if(key.ops->get(0))
-//    {
-//      LEVEL1(OFF);
-//      LEVEL2(OFF);
-//      LEVEL3(OFF);
-//      delayms(300);
-//    }
-    
-//    if (GPIO_PinRead(GPIO1,25)==0)
-//      LEVEL1(ON);
-//    if (GPIO_PinRead(GPIO1,17)==0)
-//      LEVEL2(ON);    
-//    if (GPIO_PinRead(GPIO1,20)==0)
-//      LEVEL3(ON);  
-    delayms(200);
-    LEVEL1(ON);
-    delayms(200);
-    LEVEL2(ON);    
-    delayms(200);
-    LEVEL3(ON);  
-    delayms(200);
-    LEVEL1(OFF);
-    delayms(200);
-    LEVEL2(OFF);    
-    delayms(200);
-    LEVEL3(OFF);     
-    
+    Vc = cap_voltage();
+    sprintf(txt,"%3d",Vc);
+    oled.ops->word(0,0,(uint8_t*)txt);
+    delayms(50);
+  
   }
-  
-  
 
 }
+
+
+
+
+
 
