@@ -17,8 +17,12 @@
 
 #include "system.h"
 
+/* 两个舵机的控制数组 */
 uint16_t servo_highpulse[2] = {SERVO_MID,SERVO_MID} ; /* 舵机控制变量 */
-
+angle_data_t   ServoAngle = { 
+                              .Pitch = 0,
+                              .Yaw   = 0,
+                              };                 /* 初始偏航、俯仰0° */
 
 /**
  *  舵机测试
@@ -36,9 +40,9 @@ void servo_test(void)
   key.init();
   pwm_init();
 
-  sprintf(txt, "->PWM1:");
+  sprintf(txt, "->Pich:");
   LCD_P6x8Str(0,0,(uint8_t*)txt); 
-  sprintf(txt, "  PWM2:");
+  sprintf(txt, "  Yaw :");
   LCD_P6x8Str(0,1,(uint8_t*)txt); 
   sprintf(txtnull, "  ");
    
@@ -51,10 +55,10 @@ void servo_test(void)
     case no_key:
       break;
     case key_minus:
-      servo_highpulse[pwm_choose] -= 10;
+      pwm_choose == 0 ? ServoAngle.Pitch-- : ServoAngle.Yaw--;
       break; 
-    case key_plus:           
-      servo_highpulse[pwm_choose] += 10;
+    case key_plus:      
+      pwm_choose == 0 ? ServoAngle.Pitch++ : ServoAngle.Yaw++;
       break;
     case key_ok: /* 选项切换 */
       choose_falg =  (choose_falg ==0 );
@@ -73,12 +77,11 @@ void servo_test(void)
       }
       break;
     }
-    
-    sprintf(txt,"%4d",servo_highpulse[0]);
+    sprintf(txt,"%4d",ServoAngle.Pitch);
     LCD_P6x8Str(50,0,(uint8_t*)txt);
-    sprintf(txt,"%4d",servo_highpulse[1]);
+    sprintf(txt,"%4d",ServoAngle.Yaw);
     LCD_P6x8Str(50,1,(uint8_t*)txt);
-    pwm_servo(servo_highpulse);
+    angle_servo(&ServoAngle);
     delayms(100);
   }
 }

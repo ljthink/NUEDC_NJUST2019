@@ -77,7 +77,28 @@ static inline void right_motor(short duty)
 
 void servo1(uint16_t highpulse);
 void servo2(uint16_t highpulse);
-void pwm_servo(uint16_t *highpulse);
+static inline void pwm_servo(uint16_t *highpulse)
+{
+  PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmA, highpulse[0]);
+  PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmB, highpulse[1]);
+  PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);//设置pwm的 load ok位   如果同时使用subModule 的A B ，可以先设置A的Duty 再设置B的Duty 最后设置pwm的 load ok位  不然pwm容易卡死或者丢失
+}
+
+static inline void angle_servo(angle_data_t *angle)
+{
+  if (angle->Pitch<0)
+    angle->Pitch = 0; /* 炮管最低仰角 */
+  if (angle->Pitch>55)
+    angle->Pitch = 55; /* 炮管最高仰角 */
+  if(angle->Yaw>35)
+    angle->Yaw = 35;    /* 左限位35° */
+  if(angle->Yaw<-35)
+    angle->Yaw = -35;   /* 右限位-35° */
+  
+  PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmA, (uint16_t)(1500 - 11.1*angle->Pitch)); /* M3 */
+  PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmB, (uint16_t)(5.56*angle->Yaw + 1500));   /* M4 */
+  PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);//设置pwm的 load ok位   如果同时使用subModule 的A B ，可以先设置A的Duty 再设置B的Duty 最后设置pwm的 load ok位  不然pwm容易卡死或者丢失
+}
 
 /* 兼容飞卡程序不报错 */
 static inline void servo(uint16_t pwm)

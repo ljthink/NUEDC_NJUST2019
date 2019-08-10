@@ -19,7 +19,15 @@
 #ifndef _SERVO_H
 #define _SERVO_H
 
+typedef struct _angle_data
+{
+  int16_t Pitch;
+  int16_t Yaw;
+} angle_data_t;
+
+
 extern uint16_t servo_highpulse[2];
+extern angle_data_t   ServoAngle;
 void servo_test(void);
 
 

@@ -81,58 +81,58 @@ void elec_cap_voltage_test(void)
   }
 }
 
-void elec_charge_test(void)
-{
-  key.init();                   /* 按键启动 */
-  led.init();                   /* 指示灯启动 */
-  NVIC_SetPriorityGrouping(2);  /* 2: 4个抢占优先级 4个子优先级*/
-  oled.init();                   /* LCD启动 */
-  adc.init();
-  elec_gun_pin_init();
-  
-  char txt[16];
-  uint16_t SetVc = 30;
-  uint8_t flag = 1;
-  
-  sprintf(txt,"Set: %3d V",SetVc); 
-  LCD_P6x8Str(0,0,(uint8_t*)txt);
-  sprintf(txt,"Uc:  %3d V",cap_voltage()); 
-  LCD_P6x8Str(0,1,(uint8_t*)txt);   
-  
-  while(1)
-  {
-    while(flag)
-    {
-      switch (key.ops->get(0))
-      {
-      case key_minus : SetVc = SetVc - 1; break;
-      case key_plus  : SetVc = SetVc + 1; break;
-      case key_ok    : flag = 0   ; break;
-      default : break;
-      }
-      sprintf(txt,"Set: %3d V",SetVc); 
-      LCD_P6x8Str(0,0,(uint8_t*)txt);
-      sprintf(txt,"Uc:  %3d V",cap_voltage()); 
-      LCD_P6x8Str(0,1,(uint8_t*)txt);
-      delayms(10);
-    }
-    
-    /* 发射提示 */
-    oled.ops->clear();
-    
-    sprintf(txt,"charging..."); 
-    LCD_P6x8Str(0,0,(uint8_t*)txt); 
-    
-    cap_charge(SetVc);
-       
-    sprintf(txt,"fire"); 
-    LCD_P6x8Str(0,1,(uint8_t*)txt);
-    elec_fire();
-    oled.ops->clear();
-    flag = 1;
-  }
-
-}
+//void elec_charge_test(void)
+//{
+//  key.init();                   /* 按键启动 */
+//  led.init();                   /* 指示灯启动 */
+//  NVIC_SetPriorityGrouping(2);  /* 2: 4个抢占优先级 4个子优先级*/
+//  oled.init();                   /* LCD启动 */
+//  adc.init();
+//  elec_gun_pin_init();
+//  
+//  char txt[16];
+//  uint16_t SetVc = 30;
+//  uint8_t flag = 1;
+//  
+//  sprintf(txt,"Set: %3d V",SetVc); 
+//  LCD_P6x8Str(0,0,(uint8_t*)txt);
+//  sprintf(txt,"Uc:  %3d V",cap_voltage()); 
+//  LCD_P6x8Str(0,1,(uint8_t*)txt);   
+//  
+//  while(1)
+//  {
+//    while(flag)
+//    {
+//      switch (key.ops->get(0))
+//      {
+//      case key_minus : SetVc = SetVc - 1; break;
+//      case key_plus  : SetVc = SetVc + 1; break;
+//      case key_ok    : flag = 0   ; break;
+//      default : break;
+//      }
+//      sprintf(txt,"Set: %3d V",SetVc); 
+//      LCD_P6x8Str(0,0,(uint8_t*)txt);
+//      sprintf(txt,"Uc:  %3d V",cap_voltage()); 
+//      LCD_P6x8Str(0,1,(uint8_t*)txt);
+//      delayms(10);
+//    }
+//    
+//    /* 发射提示 */
+//    oled.ops->clear();
+//    
+//    sprintf(txt,"charging..."); 
+//    LCD_P6x8Str(0,0,(uint8_t*)txt); 
+//    
+//    cap_charge(SetVc);
+//       
+//    sprintf(txt,"fire"); 
+//    LCD_P6x8Str(0,1,(uint8_t*)txt);
+//    elec_fire();
+//    oled.ops->clear();
+//    flag = 1;
+//  }
+//
+//}
 
 
 

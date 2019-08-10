@@ -26,8 +26,7 @@ static inline void elec_fire(void)
 
 
 void elec_cap_voltage_test(void);
-void elec_charge_test(void);
-
+void elec_gun_pin_init(void);
 
 #endif
 

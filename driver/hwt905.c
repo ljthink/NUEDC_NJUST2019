@@ -40,8 +40,8 @@ void hwt_905_test(void)
     LCD_P6x8Str(0,2,(uint8_t*)txt);   
     
     // -90 ~ +90   ->  500 ~ 2500
-    servo_highpulse[0] = 11.1*attitude.Roll + 1500;
-    servo_highpulse[1] = 5.56*attitude.Yaw + 1500;
+    servo_highpulse[0] = (uint16_t)(11.1*attitude.Roll + 1500);
+    servo_highpulse[1] = (uint16_t)(5.56*attitude.Yaw + 1500);
     pwm_servo(servo_highpulse);
     
     status.interrupt_ch1 = 0; /* 中断复位 */

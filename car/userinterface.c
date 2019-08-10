@@ -17,10 +17,28 @@
 
 #include "system.h"
 
+/* 变量键盘操作 
+    返回 -1   +1   0
+*/
+int8_t keyboard_vlaue_ops(int16_t *val)
+{
+  switch (key.ops->get(0))
+  {
+  case key1: *val = *val - 10;break;
+  case key2: *val = *val + 10;break;
+  case key3: *val = *val - 1;break;
+  case key4: *val = *val + 1;break;
+  case key5: return 1;
+  case key6: return -1;
+  default: return 0;
+  }
+  return 0;
+}
 
 void UI_debugsetting(void)
 {
   oled.ops->clear();
+  
   
 }
 
