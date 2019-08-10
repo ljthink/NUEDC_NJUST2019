@@ -19,61 +19,49 @@
 
 int main(void)
 {
-  /* ---------------------      硬件初始化         -------------------------- */
-  system_init();        /* MCU初始化 */
-  //key_test();
-  elec_charge_test();
-  //elec_cap_voltage_test();
-  //encoder_distance_test();
-  //hwt_905_test();
-  //encoder_test();
-  //motor.pidtest(); /* pid参数调节参数 */
-  //servo_test();
-  //pwm_test();    /* 单个功能测试函数位置 */
-  lpuart1_init(115200);         /* 蓝牙发送串口启动 */
-  key.init();                   /* 按键启动 */
-  led.init();                   /* 指示灯启动 */
-  NVIC_SetPriorityGrouping(2);  /* 2: 4个抢占优先级 4个子优先级*/
-  oled.init();                   /* LCD启动 */
+ /* ---------------------      硬件初始化         -------------------------- */
+ system_init();        /* MCU初始化 */
+ elec_gun.init();      /* 电磁炮初始化 */
+ key.init();
+ pwm_init();
+ oled.init();
+ adc.init();
+ lpuart1_init(115200);
 
-  //ExInt_Init();                 /* 中断启动 */
-  char txt[16];
-
-  motor.init();         /* 车速PID控制初始化.包含ENC,PWM,PID参数初始化 */ 
-
-  UI_debugsetting();
-  
-  pit_init(kPIT_Chnl_0, 10000); /* 10ms中断 */
-  pit_init(kPIT_Chnl_1, 100000); /* 100ms中断 */ 
-
-  while(1)
-  {
-	  /* ch0中断置位？5ms  */
-	  while (status.interrupt_ch0 == 0)
-	  {
-	  }
-
-    /* 5ms控制一次两个电机转速控制 */
-    motor.pidcontrol(&motor_speed);
-
-    /* 100ms更新一次 */
-    if (status.interrupt_ch1 == 1 )
-    {
-      sprintf(txt,"ENC1: %6d ",motor_speed.enc_left); 
-      LCD_P6x8Str(0,0,(uint8_t*)txt);
-      
-      sprintf(txt,"ENC2: %6d ",motor_speed.enc_right);
-      LCD_P6x8Str(0,1,(uint8_t*)txt);
-      status.interrupt_ch1 = 0; /* 中断复位 */
-    }
-    
-    printf("%3d\n",motor_speed.enc_left);
-    /* 中断复位 */
-    status.interrupt_ch0 = 0;
-  }
+ angle_servo(&target);
+ 
+ uint8_t gun_mode;
+ 
+ while(1)
+ {  
+   gun_mode = ui_elec_gun_mode();  /* 按键选择电磁炮运行模式 */  
+   oled.ops->clear();              /* 清除屏幕内容 */
+   switch (gun_mode)
+   {
+   case 1:  elec_gun.mode1(); break;
+   case 2:  elec_gun.mode2(); break;
+   case 3:  elec_gun.mode3(); break;
+   case 4:  elec_gun.mode4(); break;
+   case 5:  elec_gun.mode5(); break;
+   default : break;
+   }
+ }
 }
 
+
+
+
 /*
+ //key_test();
+ //elec_charge_test();
+ //elec_cap_voltage_test();
+ //encoder_distance_test();
+ //hwt_905_test();
+ //encoder_test();
+ //motor.pidtest();
+ //servo_test();
+ //pwm_test();
+
 encoder_position_test();
 pit_test();
 servo_test();

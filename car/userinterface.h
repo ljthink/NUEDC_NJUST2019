@@ -21,7 +21,7 @@
 
 void UI_debugsetting(void);
 
-
+uint8_t ui_elec_gun_mode(void);
 
 
 

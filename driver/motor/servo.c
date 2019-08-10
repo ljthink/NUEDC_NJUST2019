@@ -81,7 +81,7 @@ void servo_test(void)
     LCD_P6x8Str(50,0,(uint8_t*)txt);
     sprintf(txt,"%4d",ServoAngle.Yaw);
     LCD_P6x8Str(50,1,(uint8_t*)txt);
-    angle_servo(&ServoAngle);
+    angle_servo(&target);
     delayms(100);
   }
 }

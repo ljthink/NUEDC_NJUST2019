@@ -93,27 +93,27 @@ static uint8_t key_read(uint8_t mode)
     delayms(10);   //消抖
     key_up = 0;
     if(GPIO_PinRead(GPIO1,24)==1)
-      return key1;
+      return key_m10;
     else if (GPIO_PinRead(GPIO1,25)==1)
-      return key2;
+      return key_p10;
     else if (GPIO_PinRead(GPIO1,26)==1)
-      return key3;
+      return key_m1;
     else if (GPIO_PinRead(GPIO1,27)==1)
-      return key4;
+      return key_p1;
     else if (GPIO_PinRead(GPIO1,28)==1)
-      return key5;
+      return key_mf;
     else if (GPIO_PinRead(GPIO1,29)==1)
-      return key6;
+      return key_pf;
     else if (GPIO_PinRead(GPIO1,30)==1)
-      return key7;
+      return key_ok;
     else if (GPIO_PinRead(GPIO1,31)==1)
-      return key8;
+      return key_sw;
     else if(GPIO_PinRead(GPIO2,27)==0)      
       return key_minus;
     else if(GPIO_PinRead(GPIO2,30)==0) 
       return key_plus;
     else if(GPIO_PinRead(GPIO3,04)==0) 
-      return key_ok;
+      return key_ok_o;
   }
   if(NO_KEY_PRESS) 
     key_up = 1;

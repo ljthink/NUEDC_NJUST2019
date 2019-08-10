@@ -41,17 +41,17 @@
 typedef enum _key_name_t
 {
   no_key      = 0U,
-  key1        = 1U,
-  key2        = 2U,
-  key3        = 3U,
-  key4        = 4U,
-  key5        = 5U,
-  key6        = 6U,
-  key7        = 7U,
-  key8        = 8U,    
+  key_m10     = 1U,
+  key_p10     = 2U,
+  key_m1      = 3U,
+  key_p1      = 4U,
+  key_mf      = 5U,
+  key_pf      = 6U,
+  key_ok      = 7U,
+  key_sw      = 8U,    
   key_minus   = 9U,
   key_plus    = 10U,
-  key_ok      = 11U,
+  key_ok_o    = 11U,
 }key_name_t;
 
 

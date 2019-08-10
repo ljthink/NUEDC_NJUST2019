@@ -17,9 +17,9 @@ static inline void cap_charge(uint16_t voltage)
 
 static inline void elec_fire(void)
 {
-  delayms(500);
+  delayms(300);
   GPIO_PinWrite(GPIO3,17, 0U);        /* J2低电平，继电器吸合 */
-  delayms(500);                       
+  delayms(300);                       
   GPIO_PinWrite(GPIO3,17, 1U);        /* 发射完成 */ 
 }
 

@@ -11,6 +11,7 @@ static void oled_init(void);
 const oled_operations_t oled_ops = {
     .data = oled_data,
     .clear = oled_clear,
+    .word = LCD_P6x8Str,
 
 };
 

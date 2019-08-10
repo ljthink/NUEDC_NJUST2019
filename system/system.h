@@ -42,7 +42,6 @@
     #include "fsl_xbara.h"
     #include "board.h"
  
-    //#include "list.h"
     #include "status.h"   
     #include "iic.h"
     #include "mt9v034.h"  
@@ -53,16 +52,24 @@
     #include "oled.h"
     #include "led.h"
     #include "key.h"
-#include "servo.h"
-    #include "pwm.h"
     #include "uart.h"
-    #include "adc.h"
+
     #include "encoder.h"
     #include "systick.h"
     #include "ANO_DT.h"
     #include "nrf2401.h"
     #include "spi.h"
     #include "gpt.h"
+
+    #include "adc.h"
+    #include "elec_gun.h"
+    #include "eleccontrol.h"
+    #include "pwm.h"
+    #include "servo.h"
+
+    
+    
+
     
     #include "hwt905.h"
     #include "motor_pid.h"
@@ -70,8 +77,8 @@
     #include "pit.h"
     #include "test.h"
     #include "extern_interrupt.h"
-    #include "elec_gun.h"
-    #include "eleccontrol.h"
+
+
     
     #include "speed.h"
     #include "userinterface.h"
