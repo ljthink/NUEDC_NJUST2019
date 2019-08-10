@@ -101,7 +101,6 @@ void elec_charge_test(void)
   
   while(1)
   {
-    
     while(flag)
     {
       switch (key.ops->get(0))
@@ -125,18 +124,9 @@ void elec_charge_test(void)
     LCD_P6x8Str(0,0,(uint8_t*)txt); 
     
     cap_charge(SetVc);
-    
-
-    sprintf(txt,"3"); 
+       
+    sprintf(txt,"fire"); 
     LCD_P6x8Str(0,1,(uint8_t*)txt);
-    delayms(1000);    
-    sprintf(txt,"2"); 
-    LCD_P6x8Str(0,2,(uint8_t*)txt);
-    delayms(1000);
-    sprintf(txt,"1"); 
-    LCD_P6x8Str(0,3,(uint8_t*)txt);
-    delayms(1000);
-    
     elec_fire();
     oled.ops->clear();
     flag = 1;

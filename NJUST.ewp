@@ -3124,28 +3124,16 @@
     <group>
         <name>car</name>
         <file>
-            <name>$PROJ_DIR$\car\direction.c</name>
+            <name>$PROJ_DIR$\car\eleccontrol.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\car\direction.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\car\speed.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\car\speed.h</name>
+            <name>$PROJ_DIR$\car\eleccontrol.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\car\status.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\car\status.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\car\test.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\car\test.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\car\userinterface.c</name>

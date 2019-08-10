@@ -11,18 +11,47 @@
                                         PKE_1_PULL_KEEPER_ENABLED| \
                                         PUE_1_PULL_SELECTED| \
                                         PUS_3_22K_OHM_PULL_UP| \
-                                        HYS_1_HYSTERESIS_ENABLED)  
+                                        HYS_1_HYSTERESIS_ENABLED)
 
 
-#define BARRIER_CHECK  (GPIO_PinRead(GPIO2,24) == 0)
+#define  ANY_KEY_PRESS                 (GPIO_PinRead(GPIO1,24)==1 ||\
+                                        GPIO_PinRead(GPIO1,25)==1 ||\
+                                        GPIO_PinRead(GPIO1,26)==1 ||\
+                                        GPIO_PinRead(GPIO1,27)==1 ||\
+                                        GPIO_PinRead(GPIO1,28)==1 ||\
+                                        GPIO_PinRead(GPIO1,29)==1 ||\
+                                        GPIO_PinRead(GPIO1,30)==1 ||\
+                                        GPIO_PinRead(GPIO1,31)==1 ||\
+                                        GPIO_PinRead(GPIO2,27)==0 ||\
+                                        GPIO_PinRead(GPIO2,30)==0 ||\
+                                        GPIO_PinRead(GPIO3,04)==0)
 
+#define  NO_KEY_PRESS                  (GPIO_PinRead(GPIO1,24)==0 &&\
+                                        GPIO_PinRead(GPIO1,25)==0 &&\
+                                        GPIO_PinRead(GPIO1,26)==0 &&\
+                                        GPIO_PinRead(GPIO1,27)==0 &&\
+                                        GPIO_PinRead(GPIO1,28)==0 &&\
+                                        GPIO_PinRead(GPIO1,29)==0 &&\
+                                        GPIO_PinRead(GPIO1,30)==0 &&\
+                                        GPIO_PinRead(GPIO1,31)==0 &&\
+                                        GPIO_PinRead(GPIO2,27)==1 &&\
+                                        GPIO_PinRead(GPIO2,30)==1 &&\
+                                        GPIO_PinRead(GPIO3,04)==1)
 
 typedef enum _key_name_t
 {
   no_key      = 0U,
-  key_minus   = 1U,
-  key_plus    = 2U,
-  key_ok      = 3U,
+  key1        = 1U,
+  key2        = 2U,
+  key3        = 3U,
+  key4        = 4U,
+  key5        = 5U,
+  key6        = 6U,
+  key7        = 7U,
+  key8        = 8U,    
+  key_minus   = 9U,
+  key_plus    = 10U,
+  key_ok      = 11U,
 }key_name_t;
 
 
@@ -49,6 +78,6 @@ struct _key_device
 
 
 extern const key_device_t key;
-
+void key_test(void);
 
 #endif 
