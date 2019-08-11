@@ -96,7 +96,7 @@ static inline void angle_servo(target_data_t *p)
     p->yaw = -35;   /* 右限位-35° */
   
   PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmA, (uint16_t)(1440 - 11.1*p->pitch)); /* M3 */
-  PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmB, (uint16_t)(5.56*p->yaw + 1500));   /* M4 */
+  PWM_UpdateDuty(PWM2, kPWM_Module_3, kPWM_PwmB, (uint16_t)(7.4*p->yaw + 1500));   /* M4 */
   PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);//设置pwm的 load ok位   如果同时使用subModule 的A B ，可以先设置A的Duty 再设置B的Duty 最后设置pwm的 load ok位  不然pwm容易卡死或者丢失
 }
 

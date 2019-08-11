@@ -58,13 +58,13 @@ static void elec_gun_mode1(void)
   
   /*-------------------------- 模式显示 ----------------------*/
   sprintf(txt,"MODE - 1");
-  oled.ops->word(33,0,(uint8_t*)txt);
+  oled.ops->word(33,0,txt);
   
   /*---------------------- 调整内容显示 ----------------------*/
   sprintf(txt, "->dis:     U:     V");
-  LCD_P6x8Str(0,1,(uint8_t*)txt); 
+  LCD_P6x8Str(0,1,txt); 
   sprintf(txt, "  yaw:     Pich:    ");
-  LCD_P6x8Str(0,2,(uint8_t*)txt); 
+  LCD_P6x8Str(0,2,txt); 
   sprintf(txtnull, "  ");
   
   /*-------------------------- 按键读取调整 ------------------*/
@@ -89,27 +89,27 @@ static void elec_gun_mode1(void)
     sprintf(txt, "->");
     if (choose_flag)
     {
-      LCD_P6x8Str(0,1,(uint8_t*)txt);
-      LCD_P6x8Str(0,2,(uint8_t*)txtnull);
+      LCD_P6x8Str(0,1,txt);
+      LCD_P6x8Str(0,2,txtnull);
       temp = &target.distance;
     }
     else
     {
-      LCD_P6x8Str(0,1,(uint8_t*)txtnull);
-      LCD_P6x8Str(0,2,(uint8_t*)txt); 
+      LCD_P6x8Str(0,1,txtnull);
+      LCD_P6x8Str(0,2,txt); 
       temp = &target.yaw;
     }
     
     /* 电压解算 */
     target.voltage = 0.105f*target.distance + 80.75f;
     sprintf(txt,"%4.1f",target.voltage);    /* 电压显示 */
-    LCD_P6x8Str(78,1,(uint8_t*)txt);
+    LCD_P6x8Str(78,1,txt);
     sprintf(txt,"%3.0f",target.distance);   /* 距离显示 */
-    LCD_P6x8Str(36,1,(uint8_t*)txt);
+    LCD_P6x8Str(36,1,txt);
     sprintf(txt,"%3.1f",target.yaw);        /* 偏角显示 */
-    LCD_P6x8Str(36,2,(uint8_t*)txt);
+    LCD_P6x8Str(36,2,txt);
     sprintf(txt,"%3.1f",target.pitch);      /* 仰角显示 */
-    LCD_P6x8Str(96,2,(uint8_t*)txt);    
+    LCD_P6x8Str(96,2,txt);    
   }
   
   /*----------------------------- 发射流程 --------------------------------*/
@@ -120,10 +120,10 @@ static void elec_gun_mode1(void)
   delayms(300);
   
   sprintf(txt,"charging..."); 
-  LCD_P6x8Str(0,4,(uint8_t*)txt); 
+  LCD_P6x8Str(0,4,txt); 
   cap_charge(target.voltage);          /* 发射电压控制 */
   sprintf(txt,"fire"); 
-  LCD_P6x8Str(0,5,(uint8_t*)txt);
+  LCD_P6x8Str(0,5,txt);
   elec_fire();
   oled.ops->clear();
   /*------------------------- 发射完成 -------------------------*/
@@ -134,7 +134,7 @@ static void elec_gun_mode2(void)
 {
   char txt[16];
   sprintf(txt,"MODE - 2");
-  oled.ops->word(33,0,(uint8_t*)txt);
+  oled.ops->word(33,0,txt);
   
   /* 炮管初始姿态设定 */
   target.pitch = 3;
@@ -145,8 +145,10 @@ static void elec_gun_mode2(void)
   float delta_yaw = 0.5f;
   while(1)
   {
+    /* 刷新一次数据 */
+    openmv_data_refresh();
     /* 320像素宽，中点160 */
-    if (target_pix_x>155 && target_pix_x<165)
+    if (target_pix_x == 160)
       break; /* 推出循环准备发射 */
     else
     {/* 更新位置重新寻找目标 */
@@ -159,8 +161,15 @@ static void elec_gun_mode2(void)
         delta_yaw = 0.5f;
     }
     delayms(50);
-  }  
+  }
   
+  target.pitch = 45;
+  target.voltage = 0.105f*target.distance + 80.75f;
+  angle_servo(&target);           /* 瞄准 */
+  cap_charge(target.voltage);     /* 充电 */
+  LCD_P6x8Str(0,5,txt);
+  elec_fire();
+  oled.ops->clear();  
 }
 
 /* 运动中发射 */
@@ -168,28 +177,31 @@ static void elec_gun_mode3(void)
 {
   char txt[16];
   sprintf(txt,"MODE - 3");
-  oled.ops->word(33,0,(uint8_t*)txt);
+  oled.ops->word(33,0,txt);
  
   /* 先充电，再发射 */
-  //cap_charge(target.voltage);          /* 发射电压控制 */
+  cap_charge(107.3);          /* 发射电压控制 */
   
-  /* 炮管初始姿态设定45° */
-  target.pitch = 45;
+  /* 炮管初始姿态设定5° */
+  target.pitch = 4;
   target.yaw = -30;
   angle_servo(&target);
   
   /* 开始查找 */
   uint8_t fire_already = 1;
-  float delta_yaw = 1.0f;
+  float delta_yaw = 0.5f;
+  float fire_angle = 0;
   while(1)
   {
+    /* 刷新一次数据 */
+    openmv_data_refresh();
+    
     /* 目标在范围内发射 */
-    if (target_pix_x>155 && target_pix_x<165 && fire_already)
+    if (target_pix_x==160 && fire_already==1)
     {
-      GPIO_PinWrite(GPIO3,17, 0U); 
-      delayms(100);
-      GPIO_PinWrite(GPIO3,17, 1U);
-      fire_already = 0; /* 发射单词触发 */
+      fire_angle = target.yaw; /* 储存发射角 */
+      target.pitch = 45;       /* 炮管升起 */
+      fire_already = 2;        /* 下次不进入此函数 */
     }
     else
     {/* 更新位置重新寻找目标 */
@@ -197,9 +209,17 @@ static void elec_gun_mode3(void)
       angle_servo(&target); /* 炮管偏角更新 */
       
       if (target.yaw == 30.0f)
-        delta_yaw = -1.0f;
+        delta_yaw = -0.5f;
       if (target.yaw == -30.0f)
-        delta_yaw = 1.0f;
+        delta_yaw = 0.5f;
+    }
+    
+    if (fire_already == 2 && target.yaw == fire_angle)
+    {
+      GPIO_PinWrite(GPIO3,17, 0U);        /* J2低电平，继电器吸合 */
+      delayms(50);                       
+      GPIO_PinWrite(GPIO3,17, 1U);        /* 发射完成 */ 
+      fire_already = 0;
     }
     delayms(50);
   }
@@ -209,7 +229,7 @@ static void elec_gun_mode4(void)
 {
   char txt[16];
   sprintf(txt,"mode4");
-  oled.ops->word(0,0,(uint8_t*)txt);
+  oled.ops->word(0,0,txt);
   delayms(1000);  
 }
 
@@ -220,13 +240,13 @@ static void elec_gun_mode5(void)
   
   /*-------------------------- 模式显示 ----------------------*/
   sprintf(txt,"MODE - 5");
-  oled.ops->word(33,0,(uint8_t*)txt);
+  oled.ops->word(33,0,txt);
   
   /*---------------------- 调整内容显示 ----------------------*/
   sprintf(txt, "->dis:     U:     V");
-  LCD_P6x8Str(0,1,(uint8_t*)txt); 
+  LCD_P6x8Str(0,1,txt); 
   sprintf(txt, "  yaw:     Pich:    ");
-  LCD_P6x8Str(0,2,(uint8_t*)txt); 
+  LCD_P6x8Str(0,2,txt); 
   sprintf(txtnull, "  ");
   
   /*-------------------------- 按键读取调整 ------------------*/
@@ -251,26 +271,26 @@ static void elec_gun_mode5(void)
     sprintf(txt, "->");
     if (choose_flag)
     {
-      LCD_P6x8Str(0,1,(uint8_t*)txt);
-      LCD_P6x8Str(0,2,(uint8_t*)txtnull);
+      LCD_P6x8Str(0,1,txt);
+      LCD_P6x8Str(0,2,txtnull);
       temp = &target.voltage;
     }
     else
     {
-      LCD_P6x8Str(0,1,(uint8_t*)txtnull);
-      LCD_P6x8Str(0,2,(uint8_t*)txt); 
+      LCD_P6x8Str(0,1,txtnull);
+      LCD_P6x8Str(0,2,txt); 
       temp = &target.yaw;
     }
     
     /* 电压解算 */
     sprintf(txt,"%4.1f",target.voltage);    /* 电压显示 */
-    LCD_P6x8Str(78,1,(uint8_t*)txt);
+    LCD_P6x8Str(78,1,txt);
     sprintf(txt,"%3.0f",target.distance);   /* 距离显示 */
-    LCD_P6x8Str(36,1,(uint8_t*)txt);
+    LCD_P6x8Str(36,1,txt);
     sprintf(txt,"%3.1f",target.yaw);        /* 偏角显示 */
-    LCD_P6x8Str(36,2,(uint8_t*)txt);
+    LCD_P6x8Str(36,2,txt);
     sprintf(txt,"%3.1f",target.pitch);      /* 仰角显示 */
-    LCD_P6x8Str(96,2,(uint8_t*)txt);    
+    LCD_P6x8Str(96,2,txt);    
   }
   
   /*----------------------------- 发射流程 --------------------------------*/
@@ -281,10 +301,10 @@ static void elec_gun_mode5(void)
   delayms(300);
   
   sprintf(txt,"charging..."); 
-  LCD_P6x8Str(0,4,(uint8_t*)txt); 
+  LCD_P6x8Str(0,4,txt); 
   cap_charge(target.voltage);          /* 发射电压控制 */
   sprintf(txt,"fire"); 
-  LCD_P6x8Str(0,5,(uint8_t*)txt);
+  LCD_P6x8Str(0,5,txt);
   elec_fire();
   oled.ops->clear();
   /*------------------------- 发射完成 -------------------------*/  
@@ -302,9 +322,9 @@ void elec_charge_test(void)
   char txt[16];
   
   sprintf(txt,"Set: %4.1f V",target.voltage);
-  LCD_P6x8Str(0,0,(uint8_t*)txt);
+  LCD_P6x8Str(0,0,txt);
   sprintf(txt,"Uc:  %4.1f V",cap_voltage()); 
-  LCD_P6x8Str(0,1,(uint8_t*)txt); 
+  LCD_P6x8Str(0,1,txt); 
 
   uint8_t flag = 1;
   
@@ -324,9 +344,9 @@ void elec_charge_test(void)
       default : break;
       }
       sprintf(txt,"Set: %4.1f V",target.voltage); 
-      LCD_P6x8Str(0,0,(uint8_t*)txt);
+      LCD_P6x8Str(0,0,txt);
       sprintf(txt,"Uc:  %4.1f V",cap_voltage()); 
-      LCD_P6x8Str(0,1,(uint8_t*)txt);
+      LCD_P6x8Str(0,1,txt);
       delayms(10);
     }
     /*------------------------------------------------------------*/
@@ -334,10 +354,10 @@ void elec_charge_test(void)
     /*------------------------- 发射流程 -------------------------*/
     oled.ops->clear();
     sprintf(txt,"charging..."); 
-    LCD_P6x8Str(0,0,(uint8_t*)txt); 
+    LCD_P6x8Str(0,0,txt); 
     cap_charge(target.voltage);          /* 发射电压控制 */
     sprintf(txt,"fire"); 
-    LCD_P6x8Str(0,1,(uint8_t*)txt);
+    LCD_P6x8Str(0,1,txt);
     elec_fire();
     oled.ops->clear();
     /*------------------------- 发射完成 -------------------------*/

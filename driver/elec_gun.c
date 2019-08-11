@@ -41,7 +41,7 @@ void elec_cap_voltage_test(void)
   {
     Vc = cap_voltage();
     sprintf(txt,"Uc: %3.1f V",Vc); 
-    LCD_P6x8Str(0,0,(uint8_t*)txt);
+    LCD_P6x8Str(0,0,txt);
     delayms(50);
     
   }

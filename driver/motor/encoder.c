@@ -80,11 +80,11 @@ void encoder_test(void)
   { 
     velocity1 = (int16_t)ENC_GetPositionDifferenceValue(ENC1);  //得到编码器微分值
     sprintf(txt,"ENC1:  %5d ",velocity1); 
-    LCD_P6x8Str(0,0,(uint8_t*)txt);
+    LCD_P6x8Str(0,0,txt);
     
     velocity2 = (int16_t)ENC_GetPositionDifferenceValue(ENC2);  //得到编码器微分值
     sprintf(txt,"ENC2:  %5d ",velocity2); 
-    LCD_P6x8Str(0,1,(uint8_t*)txt);
+    LCD_P6x8Str(0,1,txt);
      
     delayms(100);       //延时0.1秒
   }
@@ -102,10 +102,10 @@ void encoder_speed_test(void)
   while (1)
   {
     sprintf(txt,"ENC1: %6d ",motor_speed.enc_left); 
-    LCD_P6x8Str(0,0,(uint8_t*)txt);
+    LCD_P6x8Str(0,0,txt);
     
     sprintf(txt,"ENC2: %6d ",motor_speed.enc_right);
-    LCD_P6x8Str(0,1,(uint8_t*)txt);
+    LCD_P6x8Str(0,1,txt);
    
     delayms(100);       //延时0.1秒
   }
@@ -130,9 +130,9 @@ void encoder_distance_test(void)
     dis2 = ENC_GetPositionValue(ENC2);
     
     sprintf(txt,"%6d",dis1);
-    LCD_P6x8Str(0,0,(uint8_t*)txt);
+    LCD_P6x8Str(0,0,txt);
     sprintf(txt,"%6d",dis2);
-    LCD_P6x8Str(0,1,(uint8_t*)txt);
+    LCD_P6x8Str(0,1,txt);
     
     delayms(10);
   } 

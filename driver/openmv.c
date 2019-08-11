@@ -24,13 +24,11 @@ uint16_t target_pix_x = 0;      /* 目标像素位置 */
 
 
 void openmv_data_refresh(void)
-{
+{  
   uint8_t i;
   uint16_t distance_queue[5];
   uint16_t pix_x_queue[5];
-  uint16_t temp;
-  
-  EnableIRQ(LPUART1_IRQn);
+  uint16_t temp;  
   
   /* 取5次 */
   for (i=0;i<5;i++)
@@ -41,9 +39,9 @@ void openmv_data_refresh(void)
       pix_x_queue[i] = (mv_buff[1] - '0')*100 + (mv_buff[2] - '0')*10 + (mv_buff[3] - '0');
     if(  mv_buff[8] == ',' && mv_buff[12] == ']')
       distance_queue[i] = (mv_buff[9] - '0')*100 + (mv_buff[10] - '0')*10 + (mv_buff[11] - '0');
-  }
+  }  
   
-  DisableIRQ(LPUART1_IRQn);
+  while(mv_buff_ready == 0);
   
   /* 像素位置取平均值 */
   target_pix_x = (pix_x_queue[0] + pix_x_queue[1] + pix_x_queue[2] + pix_x_queue[3] + pix_x_queue[4])/5;
