@@ -21,7 +21,7 @@ uint8_t mv_buff[14];
 uint8_t mv_buff_ready = 0;  /* 数据就绪标志位 */
 uint16_t target_pix_x = 0;      /* 目标像素位置 */
 
-void openmv_data_test(void)
+void openmv_ascii_test(void)
 {
   key.init();
   pwm_init();

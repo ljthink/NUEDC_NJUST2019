@@ -133,8 +133,8 @@ static void elec_gun_mode1(void)
 static void elec_gun_mode2(void)
 {
   char txt[16];
-  sprintf(txt,"MODE - 1");
-  oled.ops->word(0,0,(uint8_t*)txt);
+  sprintf(txt,"MODE - 2");
+  oled.ops->word(33,0,(uint8_t*)txt);
   
   /* 炮管初始姿态设定 */
   target.pitch = 3;
@@ -142,7 +142,7 @@ static void elec_gun_mode2(void)
   angle_servo(&target);
   
   /* 开始查找 */
-  float delta_yaw = 1.0f;
+  float delta_yaw = 0.5f;
   while(1)
   {
     /* 320像素宽，中点160 */
@@ -154,33 +154,43 @@ static void elec_gun_mode2(void)
       angle_servo(&target); /* 炮管偏角更新 */
       
       if (target.yaw == 30.0f)
-        delta_yaw = -1.0f;
+        delta_yaw = -0.5f;
       if (target.yaw == -30.0f)
-        delta_yaw = 1.0f;
+        delta_yaw = 0.5f;
     }
     delayms(50);
   }  
   
 }
 
+/* 运动中发射 */
 static void elec_gun_mode3(void)
 {
   char txt[16];
-  sprintf(txt,"MODE - 1");
-  oled.ops->word(0,0,(uint8_t*)txt);
+  sprintf(txt,"MODE - 3");
+  oled.ops->word(33,0,(uint8_t*)txt);
+ 
+  /* 先充电，再发射 */
+  //cap_charge(target.voltage);          /* 发射电压控制 */
   
-  /* 炮管初始姿态设定 */
-  target.pitch = 3;
+  /* 炮管初始姿态设定45° */
+  target.pitch = 45;
   target.yaw = -30;
   angle_servo(&target);
   
   /* 开始查找 */
+  uint8_t fire_already = 1;
   float delta_yaw = 1.0f;
   while(1)
   {
-    /* 320像素宽，中点160 */
-    if (target_pix_x>155 && target_pix_x<165)
-      break; /* 推出循环准备发射 */
+    /* 目标在范围内发射 */
+    if (target_pix_x>155 && target_pix_x<165 && fire_already)
+    {
+      GPIO_PinWrite(GPIO3,17, 0U); 
+      delayms(100);
+      GPIO_PinWrite(GPIO3,17, 1U);
+      fire_already = 0; /* 发射单词触发 */
+    }
     else
     {/* 更新位置重新寻找目标 */
       target.yaw = target.yaw + delta_yaw;

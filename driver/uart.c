@@ -95,17 +95,17 @@ void LPUART1_IRQHandler(void)
   if((LPUART1->STAT)&kLPUART_RxDataRegFullFlag) //接收中断
   {
     res = LPUART1->DATA;					//读取数据
-    mv_buff[i] = res;
-    if(res == ']') /* 一组数据结束 */
+    if (res == '[') /* 一组有效数据开始 */
     {
-      i = 0;                /* 指向buf第一字节 */
+      i = 0;
+      mv_buff_ready = 0;
+    }
+    else if (res == ']') /* 一组数据结束 */
+    {
       mv_buff_ready = 1;    /* 数据就绪 */
     }
-    else 
-    {
-      i++;
-      mv_buff_ready = 0;    /* 数据接收中 */
-    }
+    mv_buff[i] = res;
+    i++;
   }
   __DSB();				//数据同步屏蔽指令
 }
