@@ -22,8 +22,6 @@ int main(void)
 {
  /* ---------------------      硬件初始化         -------------------------- */
  system_init();        /* MCU初始化 */
- 
- //openmv_data_test();
 
  elec_gun.init();      /* 电磁炮初始化 */
  key.init();
@@ -52,31 +50,3 @@ int main(void)
  }
 }
 
-
-
-
-/*
- //key_test();
- //elec_charge_test();
- //elec_cap_voltage_test();
- //encoder_distance_test();
- //hwt_905_test();
- //encoder_test();
- //motor.pidtest();
- //servo_test();
- //pwm_test();
-
-encoder_position_test();
-pit_test();
-servo_test();
-adc.circle_test();
-adc.test();
-img.roadtype_test();
-motor.pidtest();       //电机闭环测试，matlab plot画数据
-单个功能调试，函数内自带硬件初始化，都为死循环，复制到预留位置运行即可。
-
-Test_GPIO_ExInt();   //测试GPIO输入及外部中断              按键、中断检测功能    
-Test_ANO_DT();       //匿名上位机观察数据波形  不使用DMA模式，请将宏定义#define USE_DMA  0 
-encoder_test(); 
-
-*/

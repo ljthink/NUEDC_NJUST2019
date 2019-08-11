@@ -157,7 +157,7 @@ static void motor_pid_test(void)
     printf("%d\n",motor_speed.enc_left);
 
     sprintf(txt,"ENC2:  %5d ",motor_speed.enc_right); 
-    LCD_P6x8Str(0,1,(uint8_t*)txt);
+    LCD_P6x8Str(0,1,txt);
     /* 中断复位 */
     status.interrupt_ch0 = 0;
   }

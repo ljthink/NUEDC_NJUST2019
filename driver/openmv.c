@@ -50,7 +50,8 @@ void openmv_data_refresh(void)
   {
     for (uint8_t j = i + 1; j <= 4; j++) 
     {// 第i个和第j个比较j可以取到最后一位，所以要用j<=array.length-1
-      if (distance_queue[i] > distance_queue[j]) {// 注意和冒泡排序的区别，这里是i和j比较。
+      if (distance_queue[i] > distance_queue[j]) 
+      {// 注意和冒泡排序的区别，这里是i和j比较。
         temp = distance_queue[i];
         distance_queue[i] = distance_queue[j];
         distance_queue[j] = temp;

@@ -82,7 +82,7 @@ static void status_oled(void)
   case LeftCircleWaitOut  :  sprintf(txt,"WtOtLtCr"); break;
   }
 
-  LCD_P6x8Str(68,1,(uint8_t*)txt);
+  LCD_P6x8Str(68,1,txt);
   
   /* 显示当前使用传感器 */
   switch (status.sensor)
@@ -90,9 +90,9 @@ static void status_oled(void)
   case Inductance :  sprintf(txt,"Inductance"); break;
   case Camera     :  sprintf(txt,"Camera    "); break;
   } 
-  LCD_P6x8Str(68,0,(uint8_t*)txt);
+  LCD_P6x8Str(68,0,txt);
   
   sprintf(txt,"%2d",adc_roaddata.err);
-  LCD_P6x8Str(0,4,(uint8_t*)txt);
+  LCD_P6x8Str(0,4,txt);
 
 }

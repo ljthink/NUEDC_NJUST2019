@@ -131,7 +131,7 @@ void key_test(void)
   while(1)
   {
     sprintf(txt,"%2d",key.ops->get(0));
-    LCD_P6x8Str(0,0,(uint8_t*)txt);
+    LCD_P6x8Str(0,0,txt);
     delayms(100);
   }
 }

@@ -177,15 +177,15 @@ void pwm_test(void)
       break;
     }
     sprintf(txt,"PWM: %4.2f %",motorpwm/100.0f);
-    LCD_P6x8Str(0,0,(uint8_t*)txt);
+    LCD_P6x8Str(0,0,txt);
 
     left_enc = (int16_t)ENC_GetPositionDifferenceValue(ENC1);  //得到编码器微分值
     right_enc = (int16_t)ENC_GetPositionDifferenceValue(ENC2);  //得到编码器微分值
 
     sprintf(txt,"L:  %5d ",left_enc);
-    LCD_P6x8Str(0,1,(uint8_t*)txt);
+    LCD_P6x8Str(0,1,txt);
     sprintf(txt,"R:  %5d ",right_enc); 
-    LCD_P6x8Str(0,2,(uint8_t*)txt);
+    LCD_P6x8Str(0,2,txt);
     
     printf("%d\n",left_enc);
         /* 中断复位 */

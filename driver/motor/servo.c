@@ -34,9 +34,9 @@ void servo_test(void)
   pwm_init();
 
   sprintf(txt, "->Pich:");
-  LCD_P6x8Str(0,0,(uint8_t*)txt); 
+  LCD_P6x8Str(0,0,txt); 
   sprintf(txt, "  Yaw :");
-  LCD_P6x8Str(0,1,(uint8_t*)txt); 
+  LCD_P6x8Str(0,1,txt); 
   sprintf(txtnull, "  ");
    
   uint8_t choose_falg = 0;
@@ -58,22 +58,22 @@ void servo_test(void)
       sprintf(txt, "->");
       if (choose_falg)
       {
-        LCD_P6x8Str(0,0,(uint8_t*)txt);
-        LCD_P6x8Str(0,1,(uint8_t*)txtnull);
+        LCD_P6x8Str(0,0,txt);
+        LCD_P6x8Str(0,1,txtnull);
         pwm_choose = 0;
       }
       else
       {
-        LCD_P6x8Str(0,0,(uint8_t*)txtnull);
-        LCD_P6x8Str(0,1,(uint8_t*)txt); 
+        LCD_P6x8Str(0,0,txtnull);
+        LCD_P6x8Str(0,1,txt); 
         pwm_choose = 1;
       }
       break;
     }
     sprintf(txt,"%4d",ServoAngle.Pitch);
-    LCD_P6x8Str(50,0,(uint8_t*)txt);
+    LCD_P6x8Str(50,0,txt);
     sprintf(txt,"%4d",ServoAngle.Yaw);
-    LCD_P6x8Str(50,1,(uint8_t*)txt);
+    LCD_P6x8Str(50,1,txt);
     angle_servo(&target);
     delayms(100);
   }

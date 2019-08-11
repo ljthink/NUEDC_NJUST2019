@@ -50,19 +50,19 @@ uint8_t ui_elec_gun_mode(void)
   
   /*----------- 提示信息显示 -----------------*/
   sprintf(txt,"+10 -> base mode");
-  oled.ops->word(0,0,(uint8_t*)txt);
+  oled.ops->word(0,0,txt);
   
   sprintf(txt,"-10 -> static fire");
-  oled.ops->word(0,1,(uint8_t*)txt);  
+  oled.ops->word(0,1,txt);  
   
   sprintf(txt,"-1  -> dynamic fire");
-  oled.ops->word(0,2,(uint8_t*)txt);
+  oled.ops->word(0,2,txt);
   
   sprintf(txt,"+1  -> ");
-  oled.ops->word(0,3,(uint8_t*)txt);  
+  oled.ops->word(0,3,txt);  
   
   sprintf(txt,"-0.1-> voltage mode");
-  oled.ops->word(0,4,(uint8_t*)txt);   
+  oled.ops->word(0,4,txt);   
   /*------------------------------------------*/
   
   while(1)

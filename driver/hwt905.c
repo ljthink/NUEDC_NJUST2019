@@ -31,13 +31,13 @@ void hwt_905_test(void)
 	  }
     hwt_905_calculate(hwt_905buff);
     sprintf(txt,"Y: %5.2f",attitude.Pitch); 
-    LCD_P6x8Str(0,1,(uint8_t*)txt);
+    LCD_P6x8Str(0,1,txt);
     
     sprintf(txt,"X: %5.2f",attitude.Roll);
-    LCD_P6x8Str(0,0,(uint8_t*)txt);
+    LCD_P6x8Str(0,0,txt);
     
     sprintf(txt,"Z: %5.2f",attitude.Yaw);
-    LCD_P6x8Str(0,2,(uint8_t*)txt);   
+    LCD_P6x8Str(0,2,txt);   
     
     // -90 ~ +90   ->  500 ~ 2500
     servo_highpulse[0] = (uint16_t)(11.1*attitude.Roll + 1500);
