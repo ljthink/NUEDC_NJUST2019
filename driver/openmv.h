@@ -9,7 +9,9 @@ extern uint8_t mv_buff_ready;
 extern uint16_t target_pix_x;
 
 
-void openmv_ascii_test(void);
+void openmv_data_refresh(void);
+void openmv_data_test(void);
+
 
 #endif
 

@@ -82,6 +82,7 @@ void lpuart1_init(uint32_t bound)
 	LPUART_EnableInterrupts(LPUART1,kLPUART_RxDataRegFullInterruptEnable); //使能接收中断
   NVIC_SetPriority(LPUART1_IRQn,NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5,0));
 	EnableIRQ(LPUART1_IRQn);	                            //使能LPUART1中断
+  DisableIRQ(LPUART1_IRQn);
 #endif
 }	
 
@@ -102,8 +103,7 @@ void LPUART1_IRQHandler(void)
     }
     else if (res == ']') /* 一组数据结束 */
     {
-      mv_buff_ready = 1;    /* 数据就绪 */
-      mv_buff[i+1] = '\0';
+      mv_buff_ready = 1;    /* 数据就绪 */      
     }
     mv_buff[i] = res;
     i++;

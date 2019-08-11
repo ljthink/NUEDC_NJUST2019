@@ -318,12 +318,14 @@ static void oled_init(void)
 //参数：显示的位置（x,y），y为页范围0～7，要显示的字符串
 //返回：无
 //==============================================================
-void LCD_P6x8Str(unsigned char x,unsigned char y,unsigned char ch[])
+void LCD_P6x8Str(unsigned char x,unsigned char y,char ch[])
 {
+  unsigned char *temp;
+  temp = (uint8_t*)ch;
   unsigned char c=0,i=0,j=0;      
-  while (ch[j]!='\0')
+  while (temp[j]!='\0')
   {    
-    c =ch[j]-32;
+    c =temp[j]-32;
     if(x>126)
     {
       x=0;

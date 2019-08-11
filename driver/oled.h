@@ -68,7 +68,7 @@ struct _oled_operations
     void (*cmd)(uint8_t cmd);
     void (*position)(uint8_t x,uint8_t y);
     void (*clear)(void);
-    void (*word)(uint8_t x,uint8_t y,unsigned char ch[]);
+    void (*word)(uint8_t x,uint8_t y,char ch[]);
     void (*logo)(void);
 };
 
@@ -94,7 +94,7 @@ extern const oled_device_t oled;
 void LCD_WrCmd(unsigned char cmd);
 void LCD_Set_Pos(unsigned char x, unsigned char y);
 
-void LCD_P6x8Str(unsigned char x,unsigned char y,unsigned char ch[]);
+void LCD_P6x8Str(unsigned char x,unsigned char y,char ch[]);
 void LCD_njust(void);
 void LCD_Show_Frame94(void);
 void LCD_PrintFloat(unsigned char x,unsigned char y,float num);
