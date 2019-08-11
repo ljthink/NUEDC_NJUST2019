@@ -166,6 +166,7 @@ static void elec_gun_mode2(void)
   target.pitch = 45;
   target.voltage = 0.105f*target.distance + 80.75f;
   angle_servo(&target);           /* 瞄准 */
+  delayms(200);
   cap_charge(target.voltage);     /* 充电 */
   LCD_P6x8Str(0,5,txt);
   elec_fire();
@@ -180,12 +181,13 @@ static void elec_gun_mode3(void)
   oled.ops->word(33,0,txt);
  
   /* 先充电，再发射 */
-  cap_charge(107.3);          /* 发射电压控制 */
+  cap_charge(109.5);          /* 发射电压控制 */
   
-  /* 炮管初始姿态设定5° */
+  /* 炮管初始姿态设定4° */
   target.pitch = 4;
   target.yaw = -30;
   angle_servo(&target);
+  delayms(100);
   
   /* 开始查找 */
   uint8_t fire_already = 1;
@@ -195,32 +197,31 @@ static void elec_gun_mode3(void)
   {
     /* 刷新一次数据 */
     openmv_data_refresh();
-    
-    /* 目标在范围内发射 */
-    if (target_pix_x==160 && fire_already==1)
-    {
-      fire_angle = target.yaw; /* 储存发射角 */
-      target.pitch = 45;       /* 炮管升起 */
-      fire_already = 2;        /* 下次不进入此函数 */
-    }
-    else
-    {/* 更新位置重新寻找目标 */
-      target.yaw = target.yaw + delta_yaw;
-      angle_servo(&target); /* 炮管偏角更新 */
-      
-      if (target.yaw == 30.0f)
-        delta_yaw = -0.5f;
-      if (target.yaw == -30.0f)
-        delta_yaw = 0.5f;
-    }
-    
+       
     if (fire_already == 2 && target.yaw == fire_angle)
     {
       GPIO_PinWrite(GPIO3,17, 0U);        /* J2低电平，继电器吸合 */
       delayms(50);                       
       GPIO_PinWrite(GPIO3,17, 1U);        /* 发射完成 */ 
-      fire_already = 0;
+      fire_already = 0;  /* 发射完成 不再进入此函数 */
     }
+    
+    /* 目标在范围内发射 */
+    if (target_pix_x>150 && target_pix_x<153 && fire_already==1)
+    {
+      fire_angle = target.yaw; /* 储存发射角 */
+      target.pitch = 45;       /* 炮管升起 */
+      fire_already = 2;        /* 下次不进入此函数 */
+    }
+    
+    target.yaw = target.yaw + delta_yaw;
+    angle_servo(&target); /* 炮管偏角更新 */
+    
+    if (target.yaw == 30.0f)
+      delta_yaw = -0.5f;
+    if (target.yaw == -30.0f)
+      delta_yaw = 0.5f;    
+       
     delayms(50);
   }
 }
