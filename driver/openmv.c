@@ -17,7 +17,7 @@
 
 #include "system.h"
 
-uint8_t mv_buff[14];
+uint8_t mv_buff[15];
 uint8_t mv_buff_ready = 0;  /* 数据就绪标志位 */
 uint16_t target_pix_x = 0;      /* 目标像素位置 */
 
@@ -30,7 +30,7 @@ void openmv_ascii_test(void)
   lpuart1_init(115200);
 
   uint8_t i;
-  char txt[16];
+  char txt[17];
   
   sprintf(txt,"test");
   oled.ops->word(0,0,(uint8_t*)txt);
@@ -39,11 +39,9 @@ void openmv_ascii_test(void)
   {
     if (mv_buff_ready)
     {
-      for (i=0;i<14;i++)
-         txt[i] = mv_buff[i];
-      txt[i+1] = '\0';
-      oled.ops->word(0,1,(uint8_t*)txt);    
+      oled.ops->word(0,1,(uint8_t*)mv_buff);    
     }
+    delayms(10);
   }  
 }
 

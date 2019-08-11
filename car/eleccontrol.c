@@ -2,7 +2,7 @@
 
 /* 电磁炮控制的全局变量 */
 target_data_t target = {
-              .distance     = 100,  /* 目标距离cm */
+              .distance     = 200,  /* 目标距离cm */
               .yaw          = 0,    /* 目标偏角° */
               .voltage      = 100,   /* 目标对应的发射电压V */
               .pitch        = 3,    /* 目标对应的炮管仰角° */
@@ -101,7 +101,7 @@ static void elec_gun_mode1(void)
     }
     
     /* 电压解算 */
-    target.voltage = -0.0004f*target.distance*target.distance + 0.297f*target.distance + 59.757f;
+    target.voltage = 0.105f*target.distance + 80.75f;
     sprintf(txt,"%4.1f",target.voltage);    /* 电压显示 */
     LCD_P6x8Str(78,1,(uint8_t*)txt);
     sprintf(txt,"%3.0f",target.distance);   /* 距离显示 */

@@ -103,6 +103,7 @@ void LPUART1_IRQHandler(void)
     else if (res == ']') /* 一组数据结束 */
     {
       mv_buff_ready = 1;    /* 数据就绪 */
+      mv_buff[i+1] = '\0';
     }
     mv_buff[i] = res;
     i++;
