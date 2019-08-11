@@ -3588,34 +3588,10 @@
         <group>
             <name>image</name>
             <file>
-                <name>$PROJ_DIR$\driver\camera\csi.c</name>
+                <name>$PROJ_DIR$\driver\openmv.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\driver\camera\csi.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\driver\camera\fsl_csi_camera_adapter.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\driver\camera\fsl_csi_camera_adapter.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\driver\camera\getimage.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\driver\camera\getimage.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\driver\camera\img_calculate.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\driver\camera\img_calculate.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\driver\camera\mt9v034.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\driver\camera\mt9v034.h</name>
+                <name>$PROJ_DIR$\driver\openmv.h</name>
             </file>
         </group>
         <group>
@@ -3650,12 +3626,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\driver\adc.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\driver\ANO_DT.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\driver\ANO_DT.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\driver\elec_gun.c</name>
@@ -3700,12 +3670,6 @@
             <name>$PROJ_DIR$\driver\led.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\driver\nrf2401.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\driver\nrf2401.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\driver\oled.c</name>
         </file>
         <file>
@@ -3719,12 +3683,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\driver\pit.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\driver\spi.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\driver\spi.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\driver\uart.c</name>

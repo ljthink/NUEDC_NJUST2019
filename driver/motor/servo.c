@@ -17,13 +17,6 @@
 
 #include "system.h"
 
-/* 两个舵机的控制数组 */
-uint16_t servo_highpulse[2] = {SERVO_MID,SERVO_MID} ; /* 舵机控制变量 */
-angle_data_t   ServoAngle = { 
-                              .Pitch = 0,
-                              .Yaw   = 0,
-                              };                 /* 初始偏航、俯仰0° */
-
 /**
  *  舵机测试
  *  ----------------

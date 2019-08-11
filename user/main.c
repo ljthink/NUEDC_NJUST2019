@@ -21,6 +21,9 @@ int main(void)
 {
  /* ---------------------      硬件初始化         -------------------------- */
  system_init();        /* MCU初始化 */
+ 
+ //openmv_data_test();
+ 
  elec_gun.init();      /* 电磁炮初始化 */
  key.init();
  pwm_init();

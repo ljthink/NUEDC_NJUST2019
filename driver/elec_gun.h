@@ -3,12 +3,12 @@
 
 
 
-static inline uint16_t cap_voltage(void)
+static inline float cap_voltage(void)
 {
-  return (uint16_t)(adc.ops->get(3)*0.074f);
+  return (float)(adc.ops->get(3)*0.074f);
 }
 
-static inline void cap_charge(uint16_t voltage)
+static inline void cap_charge(float voltage)
 {
   GPIO_PinWrite(GPIO3,16, 1U);        /* H2高电平，继电器吸合 */
   while ( cap_voltage() <= voltage);  /* 等待 */

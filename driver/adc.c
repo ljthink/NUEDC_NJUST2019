@@ -119,24 +119,25 @@ static void adc_datarefresh(void)
 /* 电磁判断路况，AD值转换为偏差量 */
 static int8_t adc_geterror(void)
 { /* 正常的直路和弯路 */
-  if ( A1 && (!A2) && (!A3) && (!A4))         /* 1000 */
-    return NB;
-  else if ( A1 && A2 && (!A3) && (!A4) )      /* 1100 */
-    return NM;
-  else if ( (!A1) && A2 && (!A3) && (!A4) )   /* 0100 */
-    return NS;  
-  else if ( (!A1) && A2 && A3 && (!A4) )      /* 0110 */
-    return ZO;
-  else if ( (!A1) && (!A2) && A3 && (!A4) )   /* 0010 */
-    return PS;  
-  else if ( (!A1) && (!A2) && A3 && A4 )      /* 0011 */
-    return PM;   
-  else if ( (!A1) && (!A2) && (!A3) && A4 )   /* 0001 */
-    return PB;
-    
-  /* 其他的信号过小的情况，离开电磁线了 */
-  else
-    return 99;
+//  if ( A1 && (!A2) && (!A3) && (!A4))         /* 1000 */
+//    return NB;
+//  else if ( A1 && A2 && (!A3) && (!A4) )      /* 1100 */
+//    return NM;
+//  else if ( (!A1) && A2 && (!A3) && (!A4) )   /* 0100 */
+//    return NS;  
+//  else if ( (!A1) && A2 && A3 && (!A4) )      /* 0110 */
+//    return ZO;
+//  else if ( (!A1) && (!A2) && A3 && (!A4) )   /* 0010 */
+//    return PS;  
+//  else if ( (!A1) && (!A2) && A3 && A4 )      /* 0011 */
+//    return PM;   
+//  else if ( (!A1) && (!A2) && (!A3) && A4 )   /* 0001 */
+//    return PB;
+//    
+//  /* 其他的信号过小的情况，离开电磁线了 */
+//  else
+//    return 99;
+  return 0;
 }
 
 /* 电磁线偏离检查 */

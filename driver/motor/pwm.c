@@ -126,8 +126,8 @@ static void pwm_config(void)
   PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_3, true);    //设置pwm的 load ok位
   PWM_StartTimer(PWM2, 1u<<kPWM_Module_3);          //开启定时器 
   
-  servo1(SERVO_MID);
-  servo2(SERVO_MID);
+  servo1(1406); /* 初始仰角3° */
+  servo2(1500); /* 初始偏角0° */
 }
 
 void pwm_init(void)

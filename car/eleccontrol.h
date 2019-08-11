@@ -4,10 +4,10 @@
 
 typedef struct _target_data
 {
-    int16_t  distance;    /* cm */
-    int16_t  yaw;         /* °  */
-    int16_t  voltage;     /* V  */
-    int16_t  pitch;       /* °  */
+    float  distance;    /* cm */
+    float  yaw;         /* °  */
+    float  voltage;     /* V  */
+    float  pitch;       /* °  */
 } target_data_t;
 
 typedef struct _elecgun_operations elecgun_operations_t;  
