@@ -58,7 +58,7 @@ uint8_t ui_elec_gun_mode(void)
   sprintf(txt,"-1  -> dynamic fire");
   oled.ops->word(0,2,txt);
   
-  sprintf(txt,"+1  -> ");
+  sprintf(txt,"+1  -> fllow mode");
   oled.ops->word(0,3,txt);  
   
   sprintf(txt,"-0.1-> voltage mode");

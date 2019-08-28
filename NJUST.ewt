@@ -3664,6 +3664,12 @@
             <name>$PROJ_DIR$\driver\key.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\driver\ks103.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\driver\ks103.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\driver\led.c</name>
         </file>
         <file>

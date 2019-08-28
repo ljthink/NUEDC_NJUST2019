@@ -400,25 +400,25 @@ void LCD_njust(void)
 
 void LCD_PrintFloat(unsigned char x,unsigned char y,float num)
 {
-  unsigned char tmp[6],i;
+  char tmp[6],i;
   tmp[5]=0;
   num *= 10;
   if(num>0)
   {
     tmp[0]='+';
-    tmp[4]=(unsigned char)((int)num%10+0x30);
-    tmp[3]=(unsigned char)((int)num/10%10+0x30);
-    tmp[2]=(unsigned char)((int)num/100%10+0x30);
-    tmp[1]=(unsigned char)((int)num/1000%10+0x30);
+    tmp[4]=(char)((int)num%10+0x30);
+    tmp[3]=(char)((int)num/10%10+0x30);
+    tmp[2]=(char)((int)num/100%10+0x30);
+    tmp[1]=(char)((int)num/1000%10+0x30);
   }
   else
   {
     tmp[0]='-';
     num=-num;
-    tmp[4]=(unsigned char)((int)num%10+0x30);
-    tmp[3]=(unsigned char)((int)num/10%10+0x30);
-    tmp[2]=(unsigned char)((int)num/100%10+0x30);
-    tmp[1]=(unsigned char)((int)num/1000%10+0x30);
+    tmp[4]=(char)((int)num%10+0x30);
+    tmp[3]=(char)((int)num/10%10+0x30);
+    tmp[2]=(char)((int)num/100%10+0x30);
+    tmp[1]=(char)((int)num/1000%10+0x30);
   }
   for(i=0;i<4;i++)
   {

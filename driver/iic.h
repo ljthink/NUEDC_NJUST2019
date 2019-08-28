@@ -23,17 +23,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "system.h"
 
-#ifdef MY_PCB
 
 #define IIC1_SCL_PINMUX IOMUXC_GPIO_AD_B1_00_LPI2C1_SCL   //J11
 #define IIC1_SDA_PINMUX IOMUXC_GPIO_AD_B1_01_LPI2C1_SDA   //K11 换成N3无法使用
 
-#else
-
-#define IIC1_SCL_PINMUX IOMUXC_GPIO_AD_B1_00_LPI2C1_SCL
-#define IIC1_SDA_PINMUX IOMUXC_GPIO_AD_B1_01_LPI2C1_SDA
-
-#endif
 
 
 
@@ -60,7 +53,7 @@ extern volatile bool            lpi2c1_nakflag;     //nak标志
  *
  * @param 波特率选择,400000 3400000
  */
-void LPI2C1_Init(uint32_t baudrate);
+void lpi2c1_init(uint32_t baudrate);
 
 /*!
  * @brief I2C1读字节
@@ -70,7 +63,7 @@ void LPI2C1_Init(uint32_t baudrate);
  * @param 设备地址
  * @retval 读取状态
  */
-uint8_t iic1_read(uint16_t ReadAddr, uint8_t *val ,uint8_t addr);
+uint8_t iic1_read(uint8_t ReadAddr, uint8_t *val ,uint8_t addr);
 
 /*!
  * @brief I2C1写字节

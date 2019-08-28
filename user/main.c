@@ -22,7 +22,7 @@ int main(void)
 {
  /* ---------------------      硬件初始化         -------------------------- */
  system_init();        /* MCU初始化 */
-
+ks103_test();
  elec_gun.init();      /* 电磁炮初始化 */
  key.init();
  pwm_init();
@@ -40,11 +40,11 @@ int main(void)
    oled.ops->clear();              /* 清除屏幕内容 */
    switch (gun_mode)
    {
-   case 1:  elec_gun.mode1(); break;
-   case 2:  elec_gun.mode2(); break;
-   case 3:  elec_gun.mode3(); break;
-   case 4:  elec_gun.mode4(); break;
-   case 5:  elec_gun.mode5(); break;
+   case 1:  elec_gun.mode1(); break; /* 基本模式 */
+   case 2:  elec_gun.mode2(); break; /* 静止射击 */
+   case 3:  elec_gun.mode3(); break; /* 转动射击 */
+   case 4:  elec_gun.mode4(); break; /* 跟随射击 */
+   case 5:  elec_gun.mode5(); break; /* 直接调压 */
    default : break;
    }
  }

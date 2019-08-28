@@ -49,9 +49,9 @@ void LPI2C1_Mastercallback(LPI2C_Type *base, lpi2c_master_handle_t *handle, stat
 /*!
  * @brief LPI2C1初始化
  *
- * @param 波特率选择,400000 3400000
+ * @param 波特率选择,100000,400000 3400000
  */
-void LPI2C1_Init(uint32_t baudrate)
+void lpi2c1_init(uint32_t baudrate)
 {
 	uint32_t i2cclk = 0;
 
@@ -90,8 +90,8 @@ void LPI2C1_Init(uint32_t baudrate)
  * @param 设备地址
  * @retval 读取状态
  */
-uint8_t iic1_read(uint16_t ReadAddr, uint8_t *val ,uint8_t addr)
-{				  
+uint8_t iic1_read(uint8_t ReadAddr, uint8_t *val ,uint8_t addr)
+{
 	uint8_t status = 0;
 	/* 配置传输结构体 */
 	iic_config.slaveAddress     =	addr;     					//设备地址

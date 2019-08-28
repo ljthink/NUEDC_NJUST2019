@@ -44,6 +44,7 @@
     #include "status.h"   
     #include "iic.h"
     #include "oled.h"
+    #include "ks103.h"
     #include "led.h"
     #include "key.h"
     #include "uart.h"
