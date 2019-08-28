@@ -184,17 +184,19 @@ void ks103_test(void)
   oled.init();
   IIC_Init();
   uint16_t range;
-  float distance;
   char txt[16];
 	while(1)
 	{
-    KS103_WriteOneByte(0xe8,0x02,0x1f);
-    delayms(100); 
+//    KS103_WriteOneByte(0xe8,0x02,0x1f);
+//    delayms(100); 
+    KS103_WriteOneByte(0xe8,0x02,0xb0);
+    delayms(50); 
+    
     range = KS103_ReadOneByte(0xe8, 0x02);
     range <<= 8;
     range += KS103_ReadOneByte(0xe8, 0x03);
-    distance = range*340/2/10000;
-    sprintf(txt,"%3.1f",distance);
+    //distance = range*340/2/10000;
+    sprintf(txt,"%4d mm",range);
     oled.ops->word(0,0,txt);
   }
 }

@@ -21,14 +21,12 @@ uint8_t mv_buff[15];
 uint8_t mv_buff_ready = 0;  /* 数据就绪标志位 */
 uint16_t target_pix_x = 0;      /* 目标像素位置 */
 
-
-
 void openmv_data_refresh(void)
 {  
   uint8_t i;
   uint16_t distance_queue[5];
   uint16_t pix_x_queue[5];
-  uint16_t temp;  
+  uint16_t temp;
   
   /* 取5次 */
   for (i=0;i<5;i++)
@@ -82,4 +80,23 @@ void openmv_data_test(void)
     oled.ops->word(0,2,txt); 
   }
   
+}
+
+
+
+void openmv_control_test(void)
+{
+  elec_gun.init();      /* 电磁炮初始化 */
+  key.init();
+  pwm_init();
+  oled.init();
+  adc.init();
+  lpuart1_init(115200);
+  char txt[16];
+  {
+    openmv_data_refresh();  
+    
+  
+  }
+
 }
