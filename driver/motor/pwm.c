@@ -44,17 +44,17 @@ static void pwm_pinconfig(void)
 {
   CLOCK_EnableClock(kCLOCK_Iomuxc);          /* 打开io时钟 */
 
-  IOMUXC_SetPinMux(PWM_OUT1_PINMUX, 0U);    //L5
-  IOMUXC_SetPinMux(PWM_OUT2_PINMUX, 0U);    //M5
-  IOMUXC_SetPinMux(PWM_OUT3_PINMUX, 0U);    //A8
-  IOMUXC_SetPinMux(PWM_OUT4_PINMUX, 0U);    //A9
+//  IOMUXC_SetPinMux(PWM_OUT1_PINMUX, 0U);    //L5
+//  IOMUXC_SetPinMux(PWM_OUT2_PINMUX, 0U);    //M5
+//  IOMUXC_SetPinMux(PWM_OUT3_PINMUX, 0U);    //A8
+//  IOMUXC_SetPinMux(PWM_OUT4_PINMUX, 0U);    //A9
   IOMUXC_SetPinMux(PWM_SERVO1_PINMUX, 0U);
   IOMUXC_SetPinMux(PWM_SERVO2_PINMUX, 0U);
 
-  IOMUXC_SetPinConfig(PWM_OUT1_PINMUX, 0x10B0u);  
-  IOMUXC_SetPinConfig(PWM_OUT2_PINMUX, 0x10B0u); 
-  IOMUXC_SetPinConfig(PWM_OUT3_PINMUX, 0x10B0u); 
-  IOMUXC_SetPinConfig(PWM_OUT4_PINMUX, 0x10B0u);
+//  IOMUXC_SetPinConfig(PWM_OUT1_PINMUX, 0x10B0u);  
+//  IOMUXC_SetPinConfig(PWM_OUT2_PINMUX, 0x10B0u); 
+//  IOMUXC_SetPinConfig(PWM_OUT3_PINMUX, 0x10B0u); 
+//  IOMUXC_SetPinConfig(PWM_OUT4_PINMUX, 0x10B0u);
   IOMUXC_SetPinConfig(PWM_SERVO1_PINMUX, 0x10B0u); 
   IOMUXC_SetPinConfig(PWM_SERVO2_PINMUX, 0x10B0u);
 }
@@ -68,41 +68,12 @@ static void pwm_pinconfig(void)
 static void pwm_config(void)
 {
   CLOCK_SetDiv(kCLOCK_AhbDiv, 0x0); /* Set AHB PODF to 0, divide by 1 */ //600MHz 
-  CLOCK_SetDiv(kCLOCK_IpgDiv, 0x2); /* Set IPG PODF to 2, divede by 3 */ //600MHz 3分频 200MHz
+  //CLOCK_SetDiv(kCLOCK_IpgDiv, 0x2); /* Set IPG PODF to 2, divede by 3 */ //600MHz 3分频 200MHz
 
   uint32_t              pwmSourceClockInHz;   //PWM时钟源
   pwm_config_t          pwmConfig;
   pwm_signal_param_t    pwmSignal[2];     //PWM子模块初始化结构体 
   pwmSourceClockInHz = CLOCK_GetFreq(kCLOCK_IpgClk);//时钟源  200MHz
-
-  PWM_GetDefaultConfig(&pwmConfig);  //得到默认的PWM初始化结构体
-  pwmConfig.reloadLogic       = kPWM_ReloadPwmFullCycle;   //循环输出
-  pwmConfig.enableDebugMode   = true;    
-  pwmConfig.prescale          = kPWM_Prescale_Divide_32;        //PWM时钟为 pwmSourceClockInHz 32分频 
-  pwmConfig.pairOperation     = kPWM_ComplementaryPwmA; /* AB通道互补输出，A为主通道 */
-
-  pwmSignal[0].pwmChannel       = kPWM_PwmA;        //默认使用通道A
-  pwmSignal[0].level            = kPWM_HighTrue;    //输出电平为高电平
-  pwmSignal[0].dutyCyclePercent = 50;                //初始占空比 0%
-  pwmSignal[0].deadtimeValue    = ((uint64_t)pwmSourceClockInHz * 5000) / 1000000000;                //死区时间
-  /*当AB两通道同时使用 才有作用*/
-  pwmSignal[1].pwmChannel       = kPWM_PwmB;        // 使用PWMB
-  pwmSignal[1].level            = kPWM_HighTrue;    //输出电平为高电平
-  pwmSignal[1].dutyCyclePercent = 50;                //初始占空比 0%
-  pwmSignal[1].deadtimeValue    = ((uint64_t)pwmSourceClockInHz * 5000) / 1000000000;      //死区时间
-
-  PWM_Init(PWM2, kPWM_Module_0, &pwmConfig);
-  PWM2->SM[kPWM_Module_0].DISMAP[0]=0;      //屏蔽故障检测功能 
-  /*设置pwm的时钟 = pwmSourceClockInHz，频率 = Frequency 对齐方式 = kPWM_SignedCenterAligned，*/
-  PWM_SetupPwm(PWM2, kPWM_Module_0, pwmSignal, 2, kPWM_SignedCenterAligned, 12000,pwmSourceClockInHz); 
-  PWM_SetPwmLdok(PWM2, 1u<<kPWM_Module_0, true);    //设置pwm的 load ok位
-  PWM_StartTimer(PWM2, 1u<<kPWM_Module_0);          //开启定时器
-
-  PWM_Init(PWM1, kPWM_Module_3, &pwmConfig);
-  PWM1->SM[kPWM_Module_3].DISMAP[0]=0;      //屏蔽故障检测功能
-  PWM_SetupPwm(PWM1, kPWM_Module_3, pwmSignal, 2, kPWM_SignedCenterAligned, 12000,pwmSourceClockInHz); 
-  PWM_SetPwmLdok(PWM1, 1u<<kPWM_Module_3, true);    //设置pwm的 load ok位
-  PWM_StartTimer(PWM1, 1u<<kPWM_Module_3);          //开启定时器 
  
   PWM_GetDefaultConfig(&pwmConfig);  //得到默认的PWM初始化结构体
   pwmConfig.reloadLogic       = kPWM_ReloadPwmFullCycle;   //循环输出

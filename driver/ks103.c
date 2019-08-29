@@ -1,43 +1,51 @@
 #include "system.h"
 
+/*
+  J11 - SCL - ADB100
+  K11 - SDA - ADB101
+*/
 
-
-void IIC_Init(void)
+void ks103_init(void)
 {
-  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_01_GPIO2_IO17,   0U);/* SCL-B11-B101 */
-  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_02_GPIO2_IO18,   0U);/* SDA-C11-B102 */
+//  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_01_GPIO2_IO17,   0U);/* SCL-B11-B101 */
+//  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_02_GPIO2_IO18,   0U);/* SDA-C11-B102 */
+//  
+//  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_01_GPIO2_IO17, 0x10B0u); 
+//  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_02_GPIO2_IO18, 0x10B0u);
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_00_GPIO1_IO16,   0U);/* SCL-B11-B101 */
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_01_GPIO1_IO17,   0U);/* SDA-C11-B102 */
   
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_01_GPIO2_IO17, 0x10B0u); 
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_02_GPIO2_IO18, 0x10B0u);
-  
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_00_GPIO1_IO16, 0x10B0u); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_01_GPIO1_IO17, 0x10B0u); 
   gpio_pin_config_t GPIO_Output_Config = {kGPIO_DigitalOutput, //GPIO为输出方向
                                       1,                      //高电平
                                       kGPIO_NoIntmode         //非中断模式
                                       };
-  
-  GPIO_PinInit(GPIO2,17, &GPIO_Output_Config);
-  GPIO_PinInit(GPIO2,18, &GPIO_Output_Config);  
+  GPIO_PinInit(GPIO1,16, &GPIO_Output_Config);
+  GPIO_PinInit(GPIO1,17, &GPIO_Output_Config);  
+//  GPIO_PinInit(GPIO2,17, &GPIO_Output_Config);
+//  GPIO_PinInit(GPIO2,18, &GPIO_Output_Config);  
 }
 
 void SDA_IN(void)
 {
-  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_02_GPIO2_IO18,0U);/*SDA-C11*/
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_02_GPIO2_IO18,0xF080);  
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_01_GPIO1_IO17,   0U);
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_01_GPIO1_IO17,0xF080);  
   gpio_pin_config_t GPIO_Input_Config = {kGPIO_DigitalInput,    //GPIO为输入方向
                                1,                               //高电平
                                kGPIO_NoIntmode,                 //不触发中断
                                };  
-  GPIO_PinInit(GPIO2,18, &GPIO_Input_Config);
+  GPIO_PinInit(GPIO1,17, &GPIO_Input_Config);
 }
 void SDA_OUT(void)
 {
-  IOMUXC_SetPinMux(IOMUXC_GPIO_B1_02_GPIO2_IO18,0U);/*SDA-C11*/
-  IOMUXC_SetPinConfig(IOMUXC_GPIO_B1_02_GPIO2_IO18,0x10B0u);
+  IOMUXC_SetPinMux(IOMUXC_GPIO_AD_B1_01_GPIO1_IO17,   0U);/* SDA-C11-B102 */
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_AD_B1_01_GPIO1_IO17,0x10B0u);
   gpio_pin_config_t GPIO_Output_Config = {kGPIO_DigitalOutput, //GPIO为输出方向
                                       1,                      //高电平
                                       kGPIO_NoIntmode         //非中断模式
                                       };
-  GPIO_PinInit(GPIO2,18, &GPIO_Output_Config);
+  GPIO_PinInit(GPIO1,17, &GPIO_Output_Config);
 }
 
 
@@ -182,21 +190,32 @@ uint8_t KS103_ReadOneByte(uint8_t address, uint8_t reg)
 void ks103_test(void)
 {	
   oled.init();
-  IIC_Init();
-  uint16_t range;
+  ks103_init();
+ elec_gun.init();      /* 电磁炮初始化 */
+ key.init();
+// pwm_init();
+// oled.init();
+// adc.init();
+// 
+// lpuart1_init(115200);  
+  
   char txt[16];
 	while(1)
 	{
-//    KS103_WriteOneByte(0xe8,0x02,0x1f);
-//    delayms(100); 
-    KS103_WriteOneByte(0xe8,0x02,0xb0);
-    delayms(50); 
-    
-    range = KS103_ReadOneByte(0xe8, 0x02);
-    range <<= 8;
-    range += KS103_ReadOneByte(0xe8, 0x03);
-    //distance = range*340/2/10000;
-    sprintf(txt,"%4d mm",range);
-    oled.ops->word(0,0,txt);
+//    KS103_WriteOneByte(0xe8,0x02,0xb0);
+//    delayms(50); 
+//    range = KS103_ReadOneByte(0xe8, 0x02);
+//    range <<= 8;
+//    range += KS103_ReadOneByte(0xe8, 0x03);
+//    sprintf(txt,"%4d mm",range);
+//    oled.ops->word(0,0,txt);
+//    KS103_WriteOneByte(0xe8,0x02,0xb0);
+//    delayms(50); 
+//    target.distance_ks103 = KS103_ReadOneByte(0xe8, 0x02);
+//    target.distance_ks103 <<= 8;
+//    target.distance_ks103 += KS103_ReadOneByte(0xe8, 0x03);
+    ks103_get_distance();
+    sprintf(txt,"%4d mm",target.distance_ks103);
+    oled.ops->word(0,0,txt);   
   }
 }

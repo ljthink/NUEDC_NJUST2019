@@ -62,7 +62,10 @@ uint8_t ui_elec_gun_mode(void)
   oled.ops->word(0,3,txt);  
   
   sprintf(txt,"-0.1-> voltage mode");
-  oled.ops->word(0,4,txt);   
+  oled.ops->word(0,4,txt);
+  
+  sprintf(txt,"+0.1-> distance");
+  oled.ops->word(0,5,txt);  
   /*------------------------------------------*/
   
   while(1)
@@ -77,7 +80,9 @@ uint8_t ui_elec_gun_mode(void)
     else if(getkey == key_p1)
       return 4;   
     else if(getkey == key_mf)
-      return 5;   
+      return 5;
+    else if(getkey == key_pf)
+      return 6;
     delayms(10);
   }
 }

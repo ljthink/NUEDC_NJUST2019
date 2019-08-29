@@ -44,7 +44,7 @@
     #include "status.h"   
     #include "iic.h"
     #include "oled.h"
-    #include "ks103.h"
+    
     #include "led.h"
     #include "key.h"
     #include "uart.h"
@@ -66,7 +66,7 @@
     #include "pit.h"
     #include "test.h"
     #include "extern_interrupt.h"
-
+    #include "ks103.h"
     #include "userinterface.h"
     #include "CodeStyle.h"
 

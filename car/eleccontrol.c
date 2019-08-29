@@ -2,14 +2,15 @@
 
 /* 电磁炮控制的全局变量 */
 target_data_t target = {
-              .distance     = 200,  /* 目标距离cm */
-              .yaw          = 0,    /* 目标偏角° */
-              .voltage      = 80,  /* 目标对应的发射电压V */
-              .pitch        = 3,    /* 目标对应的炮管仰角° */
+              .distance       = 200,  /* 目标距离cm */
+              .distance_ks103 = 200,  /* 超声波测距cm */
+              .yaw            = 0,    /* 目标偏角° */
+              .voltage        = 80,  /* 目标对应的发射电压V */
+              .pitch          = 3,    /* 目标对应的炮管仰角° */
 };
 
 /*-------------------------- 方法声明 ---------------------------*/
-static int16_t distance2voltage(void);
+static inline float distance2voltage(void);
 static int16_t distance2pitch(void);
 
 static void elec_gun_mode1(void);
@@ -17,6 +18,7 @@ static void elec_gun_mode2(void);
 static void elec_gun_mode3(void);
 static void elec_gun_mode4(void);
 static void elec_gun_mode5(void);
+static void elec_gun_mode6(void);
 
 /*---------------------- 接口定义 --------------------------------*/
 const elecgun_operations_t distance_ops = {
@@ -31,17 +33,19 @@ const elec_device_t elec_gun = {
                       .mode3 = elec_gun_mode3,
                       .mode4 = elec_gun_mode4,
                       .mode5 = elec_gun_mode5,
+                      .mode6 = elec_gun_mode6,
                       .distance = &distance_ops,
 };
 
 /*--------------------- 控制量计算 ------------------------------*/
 
 /* 根据距离求解控制数据，实验拟合 */
-static int16_t distance2voltage(void)
+static inline float distance2voltage(void)
 {
-  return 0;  
+  ks103_get_distance();
+  return (0.1243f*target.distance_ks103 + 47.055f);
 }
-static int16_t distance2pitch(void)
+static inline int16_t distance2pitch(void)
 {
   return 0;
 }
@@ -49,6 +53,9 @@ static int16_t distance2pitch(void)
 /*---------------------------- 四种模式 -------------------------*/
 
 /*---------------------------- 1.基本模式，按键设置 ---------------*/
+/*
+   按键设置距离和偏角
+*/
 static void elec_gun_mode1(void)
 {
   char txt[21];
@@ -99,7 +106,7 @@ static void elec_gun_mode1(void)
     }
     
     /* 电压解算 */
-    target.voltage = 0.105f*target.distance + 80.75f;
+    target.voltage = distance2voltage();
     sprintf(txt,"%4.1f",target.voltage);    /* 电压显示 */
     oled.ops->word(78,1,txt);
     sprintf(txt,"%3.0f",target.distance);   /* 距离显示 */
@@ -115,7 +122,7 @@ static void elec_gun_mode1(void)
   angle_servo(&target); /* 瞄准 */
   
   /* 舵机响应时间 */
-  delayms(300);
+  delayms(200);
   
   sprintf(txt,"charging..."); 
   oled.ops->word(0,4,txt); 
@@ -141,15 +148,15 @@ static void elec_gun_mode2(void)
   target.yaw = -30;
   angle_servo(&target);
   
-  
   sprintf(txt,"press ok to start");
   oled.ops->word(0,1,txt);
 
   /* 按键启动 */
   while( key.ops->get(0) != key_ok);  
-  
+ 
+  /* 转动查找模式 */
   /* 开始查找 */
-  float delta_yaw = 0.5f;
+  float delta_yaw = 0.25f;
   while(1)
   {
     /* 刷新一次数据 */
@@ -163,15 +170,16 @@ static void elec_gun_mode2(void)
       angle_servo(&target); /* 炮管偏角更新 */
       
       if (target.yaw == 30.0f)
-        delta_yaw = -0.5f;
+        delta_yaw = -0.25f;
       if (target.yaw == -30.0f)
-        delta_yaw = 0.5f;
+        delta_yaw = 0.25f;
     }
-    delayms(50);
+    delayms(30);
   }
+
   
   target.pitch = 45;  /* 仰角更新 */
-  target.voltage = 0.105f*target.distance + 80.75f; /* 发射电压计算 */
+  target.voltage = distance2voltage(); /* 发射电压计算 */
   angle_servo(&target);           /* 瞄准 */
   cap_charge(target.voltage);     /* 充电 */
   elec_fire();                    /* 发射 */
@@ -210,8 +218,9 @@ static void elec_gun_mode3(void)
     /* 刷新一次数据 */
     openmv_data_refresh();
     
+
     /* 有发射角记录，且充电完成，发射 */
-    if (fire_already == 2 && target.yaw == fire_angle && charged_ok==1)
+    if (fire_already == 3 && target.yaw == fire_angle && charged_ok==1)
     {
       GPIO_PinWrite(GPIO3,17, 0U);      /* J2低电平，继电器吸合 */
       delayms(50);                       
@@ -220,12 +229,18 @@ static void elec_gun_mode3(void)
     }
     
     /* 148-153 精度海星*/
-    if (target_pix_x>148 && target_pix_x<153 && fire_already==1)    /* 目标在范围内发射，从-30往左找，选中间偏右位置，提前量。 */
+    if (target_pix_x>151 && target_pix_x<156 && fire_already==1)    /* 目标在范围内发射，从-30往左找，选中间偏右位置，提前量。 */
     {
-      fire_angle = target.yaw; /* 储存发射角 */
+      fire_angle = target.yaw + 0.5; /* 储存发射角 */
       target.pitch = 45;       /* 炮管升起 */
       fire_already = 2;        /* 下次不进入此函数 */
     }
+    
+    /* 跳过第一次相等 */
+    if(fire_already == 2 && target.yaw == fire_angle)
+    {
+      fire_already = 3;
+    }    
     
     target.yaw = target.yaw + delta_yaw;
     angle_servo(&target); /* 炮管偏角更新 */
@@ -239,7 +254,7 @@ static void elec_gun_mode3(void)
     GPT_StartTimer(GPT2);
     while(GPT_GetCurrentTimerCount(GPT2) < 500000 - 7)
     {
-      if (cap_voltage() >= 109.5 )
+      if (cap_voltage() >= 79.5 )
       {
         stop_charge();
         charged_ok = 1;
@@ -257,32 +272,65 @@ static void elec_gun_mode4(void)
   oled.ops->word(33,0,txt); 
  
   int err,sum = 0;
+  err = 160 - target_pix_x;
   
       /* 刷新一次数据 */
+//  while(1)
+//  {
+//    openmv_data_refresh();
+//    /* 像素PI控制 */
+//    err = 160 - target_pix_x;
+//    sum += err;
+//    target.yaw = 0.1*err + 0.05*sum;
+//    angle_servo(&target); /* 炮管偏角更新 */
+//    
+//    if(err<3 && err>-3)/* 调整完成 */
+//      break;
+//    delayms(50);        
+//  }
+//  
+//  sprintf(txt,"locked");
+//  oled.ops->word(0,1,txt);
+  
+  /* 炮管初始姿态设定 */
+  target.pitch = 3;
+  target.yaw = -30;
+  angle_servo(&target);
+  
+  sprintf(txt,"press ok to start");
+  oled.ops->word(0,1,txt);
+
+  /* 按键启动 */
+  while( key.ops->get(0) != key_ok);  
+  
+  /* 开始查找 */
+  float delta_yaw = 0.5f;
   while(1)
   {
+    /* 刷新一次数据 */
     openmv_data_refresh();
-    /* 像素PI控制 */
-    err = 160 - target_pix_x;
-    sum += err;
-    target.yaw = 0.1*err + 0.05*sum;
-    angle_servo(&target); /* 炮管偏角更新 */
-    
-    if(err<3 && err>-3)/* 调整完成 */
-      break;
-    delayms(50);        
+    /* 320像素宽，中点160 */
+    if ( target_pix_x>158 && target_pix_x<162)              /* 159,160,161 */
+      break; /* 推出循环准备发射 */
+    else
+    {/* 更新位置重新寻找目标 */
+      target.yaw = target.yaw + delta_yaw;
+      angle_servo(&target); /* 炮管偏角更新 */
+      
+      if (target.yaw == 30.0f)
+        delta_yaw = -0.5f;
+      if (target.yaw == -30.0f)
+        delta_yaw = 0.5f;
+    }
+    delayms(50);
   }
   
-  sprintf(txt,"locked");
-  oled.ops->word(0,1,txt);
-  
-  delayms(200);
-  target.pitch = 45;        /* 炮管升起 */
-  angle_servo(&target);     /* 炮管偏角更新 */
-  
-  delayms(200);
-  cap_charge(107.1);
-  elec_fire();
+  target.pitch = 45;  /* 仰角更新 */
+  target.voltage = distance2voltage(); /* 发射电压计算 */
+  angle_servo(&target);           /* 瞄准 */
+  cap_charge(target.voltage);     /* 充电 */
+  elec_fire();                    /* 发射 */
+  oled.ops->clear();
   
 }
 
@@ -364,27 +412,37 @@ static void elec_gun_mode5(void)
   }
 }
 
+
+/*-------------------------- 6.超声波测距测试 ------------------------*/
+static void elec_gun_mode6(void)
+{
+  char txt[16];
+  oled.ops->clear();
+	while(1)
+	{
+    ks103_get_distance();
+    sprintf(txt,"%4d mm",target.distance_ks103);
+    oled.ops->word(0,0,txt); 
+  }
+}
+
+
 void elec_charge_test(void)
 {
-  key.init();                   /* 按键启动 */
-  led.init();                   /* 指示灯启动 */
-  NVIC_SetPriorityGrouping(2);  /* 2: 4个抢占优先级 4个子优先级*/
-  oled.init();                   /* LCD启动 */
+  elec_gun.init();      /* 电磁炮初始化 */
+  key.init();
+  pwm_init();
+  oled.init();
   adc.init();
-  elec_gun.init();
+  ks103_init();
+  lpuart1_init(115200);
   
   char txt[16];
   
-  sprintf(txt,"Set: %4.1f V",target.voltage);
-  LCD_P6x8Str(0,0,txt);
-  sprintf(txt,"Uc:  %4.1f V",cap_voltage()); 
-  LCD_P6x8Str(0,1,txt); 
-
   uint8_t flag = 1;
   
   while(1)
   {
-    
     /*-------------- 按键控制变量，需要1外部全局标志变量 ----------*/
     while(flag)
     {

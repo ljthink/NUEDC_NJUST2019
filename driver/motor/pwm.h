@@ -23,14 +23,14 @@
 /*-------------------            OLED硬件接口       -------------------*/
 
 ///*-------------- 龙邱母版引脚 --------------*/
-/* PWM1 */
-#define PWM_OUT1_PINMUX     IOMUXC_GPIO_SD_B1_00_FLEXPWM1_PWMA03        /* L5 */
-/* PWM2 */
-#define PWM_OUT2_PINMUX     IOMUXC_GPIO_SD_B1_01_FLEXPWM1_PWMB03        /* M5 */
-/* PWM3 */
-#define PWM_OUT3_PINMUX     IOMUXC_GPIO_B0_06_FLEXPWM2_PWMA00           /* A8 */
-/* PWM4 */
-#define PWM_OUT4_PINMUX     IOMUXC_GPIO_B0_07_FLEXPWM2_PWMB00           /* A9 */
+///* PWM1 */
+//#define PWM_OUT1_PINMUX     IOMUXC_GPIO_SD_B1_00_FLEXPWM1_PWMA03        /* L5 */
+///* PWM2 */
+//#define PWM_OUT2_PINMUX     IOMUXC_GPIO_SD_B1_01_FLEXPWM1_PWMB03        /* M5 */
+///* PWM3 */
+//#define PWM_OUT3_PINMUX     IOMUXC_GPIO_B0_06_FLEXPWM2_PWMA00           /* A8 */
+///* PWM4 */
+//#define PWM_OUT4_PINMUX     IOMUXC_GPIO_B0_07_FLEXPWM2_PWMB00           /* A9 */
 /* PWM Servo1 */
 #define PWM_SERVO1_PINMUX     IOMUXC_GPIO_SD_B1_02_FLEXPWM2_PWMA03
 /* PWM Servo2 */

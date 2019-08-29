@@ -5,6 +5,7 @@
 typedef struct _target_data
 {
     float  distance;    /* cm */
+    uint16_t  distance_ks103;    /* cm */
     float  yaw;         /* °  */
     float  voltage;     /* V  */
     float  pitch;       /* °  */
@@ -14,7 +15,7 @@ typedef struct _elecgun_operations elecgun_operations_t;
 
 struct _elecgun_operations
 {
-    int16_t (*voltage)(void);
+    float (*voltage)(void);
     int16_t (*pitch)(void);
 };
 
@@ -29,6 +30,7 @@ struct _elec_device
   void (*mode3)(void);
   void (*mode4)(void);
   void (*mode5)(void);
+  void (*mode6)(void);
   const elecgun_operations_t *distance;
 };
 

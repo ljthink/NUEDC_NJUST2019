@@ -95,8 +95,8 @@ void openmv_control_test(void)
   char txt[16];
   {
     openmv_data_refresh();  
+
     
-  
   }
 
 }

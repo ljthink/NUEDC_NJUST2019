@@ -10,7 +10,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
+ * 
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -22,12 +22,13 @@ int main(void)
 {
  /* ---------------------      硬件初始化         -------------------------- */
  system_init();        /* MCU初始化 */
-ks103_test();
  elec_gun.init();      /* 电磁炮初始化 */
  key.init();
  pwm_init();
+ ks103_init();
  oled.init();
  adc.init();
+ 
  lpuart1_init(115200);
 
  angle_servo(&target);
@@ -45,6 +46,7 @@ ks103_test();
    case 3:  elec_gun.mode3(); break; /* 转动射击 */
    case 4:  elec_gun.mode4(); break; /* 跟随射击 */
    case 5:  elec_gun.mode5(); break; /* 直接调压 */
+   case 6:  elec_gun.mode6(); break; /* 测距 */
    default : break;
    }
  }
